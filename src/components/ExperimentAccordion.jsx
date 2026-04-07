@@ -17,6 +17,25 @@ function ChevronIcon({ open }) {
 }
 
 function ExecutionContent({ experiment }) {
+  if (experiment.isNotesOnly) {
+    return (
+      <div 
+        style={{
+          display: "flex", 
+          justifyContent: "center", 
+          alignItems: "center", 
+          padding: "50px 20px", 
+          fontSize: "1.15rem", 
+          fontWeight: 400, 
+          color: "rgba(255,255,255,0.35)",
+          textAlign: "center"
+        }}
+      >
+        {experiment.message}
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Code */}

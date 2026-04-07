@@ -3,25 +3,8 @@ export const experiments = [
     id: 1,
     title: "Libraries Intro",
     subtitle: "NumPy, Pandas, Matplotlib",
-    code: `import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-a = np.array([10, 20, 30])
-print(a)
-print(np.mean(a))
-
-df = pd.DataFrame({"X": ["A","B","C"], "Y": [2,4,6]})
-print(df)
-
-plt.plot(df["X"], df["Y"])
-plt.show()`,
-    output: `[10 20 30]
-20.0
-   X  Y
-0  A  2
-1  B  4
-2  C  6`
+    isNotesOnly: true,
+    message: "Refer to your lab notes."
   },
   {
     id: 2,
