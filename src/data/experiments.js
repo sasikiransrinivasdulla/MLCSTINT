@@ -26,7 +26,14 @@ y = df["C"]
 
 Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2)
 print(len(Xtr), len(Xte))`,
-    output: `4 1`
+    output: `4 1`,
+    explanation: [
+      { step: 1, eng: "DataFrame holds different values including missing ones", tel: "df lo different values unnai andulo konni missing values kuda unnai" },
+      { step: 2, eng: "fillna changes missing blanks by calculating column average", tel: "fillna use chesi missing blanks anni column average tho fill chestham" },
+      { step: 3, eng: "X stores input features and y stores output target", tel: "X lo input features y lo final output target store avutundi" },
+      { step: 4, eng: "train_test_split divides data for training models vs testing", tel: "train_test_split data ni train cheyadaniki mariyu test cheyadaniki divide chestundi" },
+      { step: 5, eng: "code prints final lengths of the split arrays", tel: "last lo split aina arrays entha peddaga unnayo lengths ni print chestundi" }
+    ]
   },
   {
     id: 3,
@@ -52,7 +59,14 @@ for k in range(1, 4):
     print(f"K={k} → Accuracy: {acc * 100:.1f}%")`,
     output: `K=1 → Accuracy: 100.0%
 K=2 → Accuracy: 100.0%
-K=3 → Accuracy: 100.0%`
+K=3 → Accuracy: 100.0%`,
+    explanation: [
+      { step: 1, eng: "data contains our main input points for learning", tel: "data lo manam model ki iche main input points unnai" },
+      { step: 2, eng: "labels define which category each data point belongs to", tel: "labels prathi data point a category ki sambandinchindo chepthundi" },
+      { step: 3, eng: "loop iterates through nearest neighbor limits from K=1 to 3", tel: "loop daggara unna neighbors gurinchi check cheyadaniki K=1 nunchi 3 daka run avtundi" },
+      { step: 4, eng: "model calculates distance and makes predicting decision", tel: "model distance calculate chesi daggara ga unde dani batti predict chestundi" },
+      { step: 5, eng: "accuracy is evaluated and printed for each specific K param", tel: "last lo accuracy entha vachindo prathi okka K value ki check chesi print chestundi" }
+    ]
   },
   {
     id: 4,
@@ -65,35 +79,37 @@ test_pts = [[2, 1], [12, 10]]
 thresh = 5
 results = []
 
-# Step 1: Process each test point
 for i in range(len(test_pts)):
     pt = test_pts[i]
     val = pt[0]
     
     is_greater = False
     
-    # Step 2: Apply threshold condition
     if val > thresh:
         is_greater = True
     else:
         is_greater = False
         
-    # Step 3: Assign class based on condition
     if is_greater == True:
         pred = 1
     else:
         pred = 0
         
-    # Store intermediate result
     results.append([pt, pred])
 
-# Step 4: Final output printing
 for r in results:
     pt = r[0]
     pred_class = r[1]
     print(f"[{pt[0]},{pt[1]}] → {pred_class}")`,
     output: `[2,1] → 0
-[12,10] → 1`
+[12,10] → 1`,
+    explanation: [
+      { step: 1, eng: "test_pts holds the fresh input points we want to guess", tel: "test_pts lo manam edhi class kanukkovalo aa kotha input points unnai" },
+      { step: 2, eng: "thresh exact number maps where condition naturally branches", tel: "threshold ye exact number daggara condition marutundo clear ga chepthundi" },
+      { step: 3, eng: "loop extracts test point checking core logical comparison", tel: "loop lo okkoka test point thiskuni threshold tho comparison chestundi" },
+      { step: 4, eng: "if value is strictly greater it splits branch to class 1", tel: "value threshold kante ekuva unte class 1 ani tree split fix chestundi" },
+      { step: 5, eng: "results array gathers mapping and prints them explicitly", tel: "results array lona gather chesi proper format tho output print chestundi" }
+    ]
   },
   {
     id: 5,
@@ -123,7 +139,14 @@ if prob_y > prob_n:
     print("class = yes")
 else:
     print("class = no")`,
-    output: `class = no`
+    output: `class = no`,
+    explanation: [
+      { step: 1, eng: "x stores simple word pairs mapped to correct y answer sets", tel: "x lo manam check cheyali anukune word pairs unnai marinchi y lo target classes unnai" },
+      { step: 2, eng: "separated independent count tracking handles yes vs no", tel: "variables tracking clear ga yes enni sarlu mariyu no sarlu vachindo lekka vestundi" },
+      { step: 3, eng: "loop manually iterates inspecting every basic logical tally", tel: "loop prathi array column ni check chesi tallies frequency register chestundi" },
+      { step: 4, eng: "probability logic scales counts returning exact percentages", tel: "probability rules use chesi specific class matching math calculate chesthundi" },
+      { step: 5, eng: "higher final computation probability returns final string decision", tel: "oka vela yes value peddaga unte final answer decision adigi print autundi" }
+    ]
   },
   {
     id: 6,
@@ -143,19 +166,16 @@ z_vals = []
 probs = []
 preds = []
 
-# Step 1: Calculate z values
 for i in range(len(test_vals)):
     val = test_vals[i]
     z = (w * val) + b
     z_vals.append(z)
 
-# Step 2: Apply sigmoid function
 for i in range(len(z_vals)):
     z = z_vals[i]
     p = 1 / (1 + math.exp(-z))
     probs.append(p)
 
-# Step 3: Apply threshold to get class
 for i in range(len(probs)):
     p = probs[i]
     if p > thresh:
@@ -163,13 +183,19 @@ for i in range(len(probs)):
     else:
         preds.append(0)
 
-# Step 4: Print final output
 for i in range(len(test_vals)):
     val = test_vals[i]
     c = preds[i]
     print(f"{val} → {c}")`,
     output: `3 → 1
-2 → 0`
+2 → 0`,
+    explanation: [
+      { step: 1, eng: "test_vals stores testable scalar numbers needing classification", tel: "test_vals ani perunna dantlo thelsukovali anukune input numbers unnai" },
+      { step: 2, eng: "loop derives strict linear calculation building z outputs", tel: "loop use chesi manual equationtho weight and bias linear ga multiply chestham" },
+      { step: 3, eng: "secondary step transforms equation variables inside math sigmoid", tel: "rendova loop log math formula use chesi z values kacchiitamo sigmoid ga marchutundi" },
+      { step: 4, eng: "strict parameter checks logical limit extracting categorical logic", tel: "tharwata values threshold datithe appudu specific class decide chesi appends vestundi" },
+      { step: 5, eng: "the extracted answers display mapped cleanly via looping prints", tel: "last loop lo inputs and results final line prints kindha clear chesi petti istadi" }
+    ]
   },
   {
     id: 7,
@@ -203,7 +229,14 @@ for i in range(len(x)):
     output: `[1,1] → 0
 [2,2] → 0
 [6,6] → 1
-[7,7] → 1`
+[7,7] → 1`,
+    explanation: [
+      { step: 1, eng: "x array maintains pairs plotting basic spatial boundaries", tel: "x array lona data points ekkada unnayo define chese plane spatial boundaries thelustai" },
+      { step: 2, eng: "t is manually chosen dividing distance barrier explicitly", tel: "t ane var strict barrier distance ga plane lona map chesi line theesthundi" },
+      { step: 3, eng: "loop computes sum mapping distances against defined line logic", tel: "loop coordinates ni line distances ga decide cheyadaniki sum calculate chestundi" },
+      { step: 4, eng: "simple logic assesses threshold boundaries sorting respective lists", tel: "logic sum calculations barrier pass aynaya lekunda class list values lo istaaru" },
+      { step: 5, eng: "predicted outcomes correlate accurately formatting final screen", tel: "final loop screen meeda mapping lists lona exact outputs check chestundi" }
+    ]
   },
   {
     id: 8,
@@ -231,35 +264,59 @@ for i in range(len(test_data)):
     ans = preds[i]
     print(f"data={val} → {ans}")`,
     output: `data=[0, 0] → 0
-data=[0, 1] → 1`
+data=[0, 1] → 1`,
+    explanation: [
+      { step: 1, eng: "data array captures extremely restricted input matching lists", tel: "data lists artificial inputs prepare chesi neural matches kosam set authundi" },
+      { step: 2, eng: "MLPClassifier structurally injects multi pathway hidden layer layers", tel: "MLPClassifier command networks prepare chesi hidden layers ni lopala forms isthundi" },
+      { step: 3, eng: "the fitting algorithm runs neural training optimization iteratively", tel: "fitting algorithm computer brain ni data vadi iterate chethu perfect learning untundi" },
+      { step: 4, eng: "testing points process structurally down predictive funnels loops", tel: "loop format lona okkoka test object neural predictive funnel lokಿ passing aypothay" },
+      { step: 5, eng: "output strings display results learned actively from nodes", tel: "neural paths output emi choose chesayo clear parameter nodes results display cheyistai" }
+    ]
   },
   {
     id: 9,
     title: "Random Forest",
-    subtitle: "RandomForestClassifier Model",
-    code: `from sklearn.ensemble import RandomForestClassifier
+    subtitle: "Manual logical voting",
+    code: `data = [1, 2, 3, 6, 7]
+labels = [0, 0, 0, 1, 1]
 
-data = [[1, 2], [2, 3], [6, 7], [7, 8]]
-labels = [0, 0, 1, 1]
-test_data = [[2, 2], [6, 8]]
-
-model = RandomForestClassifier(n_estimators=10, random_state=42)
-
-model.fit(data, labels)
-
+r1_preds = []
+r2_preds = []
+r3_preds = []
 preds = []
 
-for i in range(len(test_data)):
-    test_pt = [test_data[i]]
-    pred_val = model.predict(test_pt)
-    preds.append(pred_val[0])
+for i in range(len(data)):
+    val = data[i]
+    if val > 4: r1_preds.append(1)
+    else: r1_preds.append(0)
+    
+    if val > 5: r2_preds.append(1)
+    else: r2_preds.append(0)
+    
+    if val > 3: r3_preds.append(1)
+    else: r3_preds.append(0)
 
-for i in range(len(test_data)):
-    val = test_data[i]
-    ans = preds[i]
-    print(f"data={val} → {ans}")`,
-    output: `data=[2, 2] → 0
-data=[6, 8] → 1`
+for i in range(len(data)):
+    votes = r1_preds[i] + r2_preds[i] + r3_preds[i]
+    if votes >= 2:
+        preds.append(1)
+    else:
+        preds.append(0)
+
+for i in range(len(data)):
+    print(f"data={data[i]} → {preds[i]}")`,
+    output: `data=1 → 0
+data=2 → 0
+data=3 → 0
+data=6 → 1
+data=7 → 1`,
+    explanation: [
+      { step: 1, eng: "data defines explicit values passed across three forest models", tel: "data ante clear values forests rule model systems check cheyadaniki pass autai" },
+      { step: 2, eng: "loop generates three manually distinct logic separation outcomes", tel: "loop theskuni different checks pedthu manual outputs array trees forms create vestay" },
+      { step: 3, eng: "three prediction buckets individually emulate forest tree logic", tel: "moodu separate variables exact decision logic trees emautayo predict records chestundi" },
+      { step: 4, eng: "aggregated sums resolve classification identifying majority status", tel: "rendova loop sum aggregated marks count calculations majority check perform logic isthundi" },
+      { step: 5, eng: "a boolean strictly evaluates two-thirds criteria making predictions", tel: "boolean calculation strictly majority vachinda leda cross verification chesi print chestundi" }
+    ]
   },
   {
     id: 10,
@@ -270,7 +327,7 @@ labels = [0, 0, 0, 1, 1]
 
 pred_w1 = []
 pred_w2 = []
-final_preds = []
+preds = []
 
 for i in range(len(data)):
     if data[i] > 4:
@@ -287,19 +344,26 @@ for i in range(len(data)):
 for i in range(len(data)):
     total = pred_w1[i] + pred_w2[i]
     if total >= 1:
-        final_preds.append(1)
+        preds.append(1)
     else:
-        final_preds.append(0)
+        preds.append(0)
 
 for i in range(len(data)):
     val = data[i]
-    ans = final_preds[i]
+    ans = preds[i]
     print(f"data={val} → {ans}")`,
     output: `data=1 → 0
 data=2 → 0
 data=3 → 0
 data=6 → 1
-data=7 → 1`
+data=7 → 1`,
+    explanation: [
+      { step: 1, eng: "data establishes exact arrays testing sequential manual pipeline", tel: "data established unna logic loop independent pipeline predictions lopaliki passing start chestundi" },
+      { step: 2, eng: "independent logic boundaries function defining weak structural trees", tel: "independent checks strong rules levu gani weak parameters base avthu results isthay" },
+      { step: 3, eng: "weak decisions assign fundamental values predicting separated results", tel: "e weak checks theeskovadam thone individual parameters decision result formats return avvutay" },
+      { step: 4, eng: "final evaluation boosts accumulated accuracy defining thresholds", tel: "final loop add ups anni add chesi boosting logic values calculations finish esthay" },
+      { step: 5, eng: "values triggering greater counts override original base classes", tel: "final add values base counts daththe accurate parameters decide print thesthundi" }
+    ]
   },
   {
     id: 11,
@@ -330,6 +394,13 @@ if out_val == 1:
     print("Rain=1 → Traffic=High")
 else:
     print("Rain=1 → Traffic=Low")`,
-    output: `Rain=1 → Traffic=High`
+    output: `Rain=1 → Traffic=High`,
+    explanation: [
+      { step: 1, eng: "BayesianModel links discrete event occurrences causality directly", tel: "Rain occurrences inka traffic causations connect chesthu network model link creates ayindi" },
+      { step: 2, eng: "TabularCPD tables outline relational dependence exact probabilities", tel: "Tabular tables discrete conditions events lona probability data percent clear dimensions isthay" },
+      { step: 3, eng: "add function validates relations configuring mathematical nodes", tel: "add funciton relations tables math configurations check cheskuni nodes update map chestundi" },
+      { step: 4, eng: "engine elimination performs localized dependency probability query", tel: "elimination method probability engine localized tests map check calculations pass map works isthundi" },
+      { step: 5, eng: "query triggers explicit dictionary parameters output logic formats", tel: "target parameter inference final output string statements dictionary mappings result display" }
+    ]
   }
 ];

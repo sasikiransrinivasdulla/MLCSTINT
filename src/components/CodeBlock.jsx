@@ -19,8 +19,9 @@ const customTheme = {
   },
 };
 
-export default function CodeBlock({ code, language = "python" }) {
+export default function CodeBlock({ code, language = "python", experiment = null }) {
   const [copied, setCopied] = useState(false);
+  const [explainOpen, setExplainOpen] = useState(false);
 
   const handleCopy = async () => {
     try {
@@ -44,10 +45,19 @@ export default function CodeBlock({ code, language = "python" }) {
     <div className="code-block-wrapper">
       <div className="code-block-header">
         <span className="code-block-lang">{language}</span>
-        <button
-          className={`copy-btn ${copied ? "copied" : ""}`}
-          onClick={handleCopy}
-        >
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          {experiment && experiment.explanation && (
+            <button
+              className="explain-toggle-btn"
+              onClick={() => setExplainOpen(!explainOpen)}
+            >
+              {explainOpen ? 'Hide Explain' : '💡 Explain'}
+            </button>
+          )}
+          <button
+            className={`copy-btn ${copied ? "copied" : ""}`}
+            onClick={handleCopy}
+          >
           {copied ? (
             <>
               <span style={{ fontSize: "0.85rem" }}>✅</span> Copied!
@@ -70,7 +80,8 @@ export default function CodeBlock({ code, language = "python" }) {
               Copy
             </>
           )}
-        </button>
+          </button>
+        </div>
       </div>
       <SyntaxHighlighter
         language={language}
@@ -80,6 +91,22 @@ export default function CodeBlock({ code, language = "python" }) {
       >
         {code}
       </SyntaxHighlighter>
+
+      {experiment && experiment.explanation && Array.isArray(experiment.explanation) && (
+        <div className={`explanation-panel ${explainOpen ? 'open' : ''}`}>
+          {experiment.explanation.map((item, idx) => (
+            <div key={idx} className="expl-step">
+              <div className="expl-step-title">Step {item.step}:</div>
+              <div className="expl-row">
+                <strong>ENG:</strong> {item.eng}
+              </div>
+              <div className="expl-row tel-row">
+                <strong>TEL:</strong> <em>"{item.tel}"</em>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

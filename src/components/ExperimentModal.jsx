@@ -42,7 +42,7 @@ export default function ExperimentModal({ experiment, onClose }) {
                 <div className="section-label">
                   <span className="icon">💻</span> Code
                 </div>
-                <CodeBlock code={experiment.code} language="python" />
+                <CodeBlock code={experiment.code} language="python" experiment={experiment} />
               </div>
 
               {/* Output Section */}

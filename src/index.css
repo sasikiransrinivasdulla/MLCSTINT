@@ -299,6 +299,69 @@ body {
   white-space: pre-wrap;
 }
 
+/* Explain Button & Panel */
+.explain-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+}
+.explain-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.explanation-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.explanation-panel.open {
+  max-height: 800px;
+  overflow-y: auto;
+  opacity: 1;
+  padding: 20px;
+}
+.expl-step {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.expl-step:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.expl-step-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: block;
+}
+.tel-row {
+  margin-top: 6px; 
+  color: rgba(255, 255, 255, 0.6);
+}
+.expl-row strong {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-right: 8px;
+  letter-spacing: 0.05em;
+}
+
 /* Footer */
 .dashboard-footer {
   text-align: center;
