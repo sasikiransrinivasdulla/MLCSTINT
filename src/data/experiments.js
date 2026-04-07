@@ -31,42 +31,28 @@ print(len(Xtr), len(Xte))`,
   {
     id: 3,
     title: "KNN Classification",
-    subtitle: "Manual distance + vote",
-    code: `import math
+    subtitle: "KNeighborsClassifier from sklearn",
+    code: `from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 
-x = [[1,2],[2,3],[3,3],[6,5]]
-y = [0, 0, 0, 1]
-t = [2, 2]
+data = [[1, 2], [2, 3], [3, 3], [6, 5], [7, 8], [8, 8]]
+labels = [0, 0, 0, 1, 1, 1]
 
-d = []
+test_data = [[2, 2], [7, 7]]
+test_labels = [0, 1]
 
-# Step 1: Calculate all distances
-for i in range(len(x)):
-    pt = x[i]
-    dx = pt[0] - t[0]
-    dy = pt[1] - t[1]
-    
-    sq_dist = (dx * dx) + (dy * dy)
-    dist = math.sqrt(sq_dist)
-    
-    d.append((dist, y[i]))
-
-# Step 2: Sort neighbors
-d.sort()
-
-# Step 3: Predict for different k values
 for k in range(1, 4):
-    n_labels = []
+    model = KNeighborsClassifier(n_neighbors=k)
     
-    for i in range(k):
-        n_labels.append(d[i][1])
-        
-    # Find majority vote
-    res = max(set(n_labels), key=n_labels.count)
-    print(f"k={k} → class={res}")`,
-    output: `k=1 → class=0
-k=2 → class=0
-k=3 → class=0`
+    model.fit(data, labels)
+    preds = model.predict(test_data)
+    
+    acc = accuracy_score(test_labels, preds)
+    
+    print(f"K={k} → Accuracy: {acc * 100:.1f}%")`,
+    output: `K=1 → Accuracy: 100.0%
+K=2 → Accuracy: 100.0%
+K=3 → Accuracy: 100.0%`
   },
   {
     id: 4,
@@ -221,49 +207,15 @@ for i in range(len(x)):
   },
   {
     id: 8,
-    title: "MLP",
-    subtitle: "Simple Neural Net simulation",
-    code: `x = [1, 2, 3, 4]
-y = [0, 0, 1, 1]
-
-w1 = 1.5
-w2 = 2.0
-t = 5.0
-
-hid = []
-out = []
-preds = []
-
-for i in range(len(x)):
-    hid.append(x[i] * w1)
-
-for i in range(len(hid)):
-    out.append(hid[i] * w2)
-
-for i in range(len(out)):
-    if out[i] > t:
-        preds.append(1)
-    else:
-        preds.append(0)
-
-for i in range(len(x)):
-    print(f"x={x[i]} → {preds[i]}")`,
-    output: `x=1 → 0
-x=2 → 0
-x=3 → 1
-x=4 → 1`
-  },
-  {
-    id: 9,
     title: "Neural Network",
     subtitle: "MLPClassifier Model",
     code: `from sklearn.neural_network import MLPClassifier
 
-data = [[0, 0], [1, 1], [2, 2], [3, 3]]
+data = [[0, 0], [1, 1], [0, 1], [1, 0]]
 labels = [0, 0, 1, 1]
-test_data = [[0.5, 0.5], [2.5, 2.5]]
+test_data = [[0, 0], [0, 1]]
 
-model = MLPClassifier(hidden_layer_sizes=(2,), max_iter=1000)
+model = MLPClassifier(hidden_layer_sizes=(4,), max_iter=2000)
 
 model.fit(data, labels)
 
@@ -271,17 +223,43 @@ preds = []
 
 for i in range(len(test_data)):
     test_pt = [test_data[i]]
-    
-    pred_class = model.predict(test_pt)
-    
-    preds.append(pred_class[0])
+    pred_val = model.predict(test_pt)
+    preds.append(pred_val[0])
 
 for i in range(len(test_data)):
-    pt_val = test_data[i]
+    val = test_data[i]
     ans = preds[i]
-    print(f"data={pt_val} → {ans}")`,
-    output: `data=[0.5, 0.5] → 0
-data=[2.5, 2.5] → 1`
+    print(f"data={val} → {ans}")`,
+    output: `data=[0, 0] → 0
+data=[0, 1] → 1`
+  },
+  {
+    id: 9,
+    title: "Random Forest",
+    subtitle: "RandomForestClassifier Model",
+    code: `from sklearn.ensemble import RandomForestClassifier
+
+data = [[1, 2], [2, 3], [6, 7], [7, 8]]
+labels = [0, 0, 1, 1]
+test_data = [[2, 2], [6, 8]]
+
+model = RandomForestClassifier(n_estimators=10, random_state=42)
+
+model.fit(data, labels)
+
+preds = []
+
+for i in range(len(test_data)):
+    test_pt = [test_data[i]]
+    pred_val = model.predict(test_pt)
+    preds.append(pred_val[0])
+
+for i in range(len(test_data)):
+    val = test_data[i]
+    ans = preds[i]
+    print(f"data={val} → {ans}")`,
+    output: `data=[2, 2] → 0
+data=[6, 8] → 1`
   },
   {
     id: 10,
