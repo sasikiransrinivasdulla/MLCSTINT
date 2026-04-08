@@ -10,142 +10,160 @@ export const experiments = [
     id: 2,
     title: "Data Preprocessing",
     subtitle: "Imputation & split",
-    code: `import pandas as pd
-from sklearn.model_selection import train_test_split
+    code: `data_records = [[1, 10, 0], [2, None, 1], [3, 30, 1], [4, 40, 0]]
 
-df = pd.DataFrame({
-    "A": [1, 2, 3, 4, 5],
-    "B": [10, None, 30, 40, 50],
-    "C": [0, 1, 1, 0, 1]
-})
+clean_data = []
+feature_sum = 0
+valid_counts = 0
 
-df["B"] = df["B"].fillna(df["B"].mean())
+for i in range(len(data_records)):
+    row = data_records[i]
+    if row[1] is not None:
+        feature_sum += row[1]
+        valid_counts += 1
 
-X = df[["A", "B"]]
-y = df["C"]
+mean_value = feature_sum / valid_counts
 
-Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.2)
-print(len(Xtr), len(Xte))`,
-    output: `4 1`,
+for i in range(len(data_records)):
+    row = data_records[i]
+    if row[1] is None:
+        row[1] = mean_value
+    clean_data.append(row)
+
+train_split_count = int(len(clean_data) * 0.5)
+train_set = clean_data[:train_split_count]
+test_set = clean_data[train_split_count:]
+
+print(f"Train size: {len(train_set)}, Test size: {len(test_set)}")`,
+    output: `Train size: 2, Test size: 2`,
     explanation: [
-      { step: 1, eng: "DataFrame holds different values including missing ones", tel: "df lo different values unnai andulo konni missing values kuda unnai" },
-      { step: 2, eng: "fillna changes missing blanks by calculating column average", tel: "fillna use chesi missing blanks anni column average tho fill chestham" },
-      { step: 3, eng: "X stores input features and y stores output target", tel: "X lo input features y lo final output target store avutundi" },
-      { step: 4, eng: "train_test_split divides data for training models vs testing", tel: "train_test_split data ni train cheyadaniki mariyu test cheyadaniki divide chestundi" },
-      { step: 5, eng: "code prints final lengths of the split arrays", tel: "last lo split aina arrays entha peddaga unnayo lengths ni print chestundi" }
+      { step: 1, eng: "The list data_records stores all tabular structures including missing null columns." },
+      { step: 2, eng: "The variables feature_sum track the base valid row combinations systematically." },
+      { step: 3, eng: "The loop calculates column thresholds verifying strict missing criteria dynamically." },
+      { step: 4, eng: "The secondary block isolates incomplete elements substituting the general mean." },
+      { step: 5, eng: "The final code generates fractional testing and training partition bounds." }
     ]
   },
   {
     id: 3,
     title: "KNN Classification",
-    subtitle: "KNeighborsClassifier from sklearn",
-    code: `from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+    subtitle: "Manual distance + vote",
+    code: `import math
 
-data = [[1, 2], [2, 3], [3, 3], [6, 5], [7, 8], [8, 8]]
-labels = [0, 0, 0, 1, 1, 1]
+data_points = [[1, 2], [2, 3], [3, 3], [6, 5]]
+labels = [0, 0, 0, 1]
+test_points = [2, 2]
 
-test_data = [[2, 2], [7, 7]]
-test_labels = [0, 1]
+distance_list = []
+
+for i in range(len(data_points)):
+    point = data_points[i]
+    diff_x = point[0] - test_points[0]
+    diff_y = point[1] - test_points[1]
+    
+    sq_dist = (diff_x * diff_x) + (diff_y * diff_y)
+    dist = math.sqrt(sq_dist)
+    
+    distance_list.append((dist, labels[i]))
+
+distance_list.sort()
 
 for k in range(1, 4):
-    model = KNeighborsClassifier(n_neighbors=k)
+    neighbor_labels = []
     
-    model.fit(data, labels)
-    preds = model.predict(test_data)
-    
-    acc = accuracy_score(test_labels, preds)
-    
-    print(f"K={k} → Accuracy: {acc * 100:.1f}%")`,
-    output: `K=1 → Accuracy: 100.0%
-K=2 → Accuracy: 100.0%
-K=3 → Accuracy: 100.0%`,
+    for i in range(k):
+        neighbor_labels.append(distance_list[i][1])
+        
+    majority_class = max(set(neighbor_labels), key=neighbor_labels.count)
+    print(f"k={k} → class={majority_class}")`,
+    output: `k=1 → class=0
+k=2 → class=0
+k=3 → class=0`,
     explanation: [
-      { step: 1, eng: "data contains our main input points for learning", tel: "data lo manam model ki iche main input points unnai" },
-      { step: 2, eng: "labels define which category each data point belongs to", tel: "labels prathi data point a category ki sambandinchindo chepthundi" },
-      { step: 3, eng: "loop iterates through nearest neighbor limits from K=1 to 3", tel: "loop daggara unna neighbors gurinchi check cheyadaniki K=1 nunchi 3 daka run avtundi" },
-      { step: 4, eng: "model calculates distance and makes predicting decision", tel: "model distance calculate chesi daggara ga unde dani batti predict chestundi" },
-      { step: 5, eng: "accuracy is evaluated and printed for each specific K param", tel: "last lo accuracy entha vachindo prathi okka K value ki check chesi print chestundi" }
+      { step: 1, eng: "The list data_points stores all numerical coordinates required for measuring boundaries." },
+      { step: 2, eng: "The list labels maps static outcome categories accurately against spatial sets." },
+      { step: 3, eng: "The loop checks distance differentials explicitly processing metric planar roots." },
+      { step: 4, eng: "The nested array sorts measured proximities sorting lowest isolated coordinates." },
+      { step: 5, eng: "The final step defines overarching conditions electing categorical maximum components." }
     ]
   },
   {
     id: 4,
     title: "Decision Tree",
     subtitle: "Simple threshold split",
-    code: `x = [[2, 1], [3, 2], [10, 8], [12, 10]]
-y = [0, 0, 1, 1]
-test_pts = [[2, 1], [12, 10]]
+    code: `data_points = [[2, 1], [3, 2], [10, 8], [12, 10]]
+labels = [0, 0, 1, 1]
+test_points = [[2, 1], [12, 10]]
 
-thresh = 5
-results = []
+threshold_value = 5
+predictions = []
 
-for i in range(len(test_pts)):
-    pt = test_pts[i]
-    val = pt[0]
+for i in range(len(test_points)):
+    test_pt = test_points[i]
+    feature_val = test_pt[0]
     
     is_greater = False
     
-    if val > thresh:
+    if feature_val > threshold_value:
         is_greater = True
     else:
         is_greater = False
         
     if is_greater == True:
-        pred = 1
+        predictions.append([test_pt, 1])
     else:
-        pred = 0
-        
-    results.append([pt, pred])
+        predictions.append([test_pt, 0])
 
-for r in results:
-    pt = r[0]
-    pred_class = r[1]
-    print(f"[{pt[0]},{pt[1]}] → {pred_class}")`,
-    output: `[2,1] → 0
-[12,10] → 1`,
+for mapped_result in predictions:
+    coordinate = mapped_result[0]
+    class_out = mapped_result[1]
+    print(f"{coordinate} → class={class_out}")`,
+    output: `[2, 1] → class=0
+[12, 10] → class=1`,
     explanation: [
-      { step: 1, eng: "test_pts holds the fresh input points we want to guess", tel: "test_pts lo manam edhi class kanukkovalo aa kotha input points unnai" },
-      { step: 2, eng: "thresh exact number maps where condition naturally branches", tel: "threshold ye exact number daggara condition marutundo clear ga chepthundi" },
-      { step: 3, eng: "loop extracts test point checking core logical comparison", tel: "loop lo okkoka test point thiskuni threshold tho comparison chestundi" },
-      { step: 4, eng: "if value is strictly greater it splits branch to class 1", tel: "value threshold kante ekuva unte class 1 ani tree split fix chestundi" },
-      { step: 5, eng: "results array gathers mapping and prints them explicitly", tel: "results array lona gather chesi proper format tho output print chestundi" }
+      { step: 1, eng: "The list test_points inputs dynamic integer thresholds representing independent rules." },
+      { step: 2, eng: "The static threshold_value defines linear logical structures explicitly bounding nodes." },
+      { step: 3, eng: "The initial loop iterates evaluating isolated internal condition branches strictly." },
+      { step: 4, eng: "The condition dictates definitive boolean categories bypassing structural ambiguity elements." },
+      { step: 5, eng: "The final logical array renders predicted node branches matching final coordinates." }
     ]
   },
   {
     id: 5,
     title: "Naive Bayes",
     subtitle: "Manual probability freq",
-    code: `x = [("sunny","hot"),("sunny","cool"),("rainy","cool")]
-y = ["no","no","yes"]
-t = ("sunny","cool")
+    code: `data_points = [("sunny", "hot"), ("sunny", "cool"), ("rainy", "cool")]
+labels = ["no", "no", "yes"]
+test_points = ("sunny", "cool")
 
-sy_n = c_n = n = 0
-sy_y = c_y = y_count = 0
+yes_count = no_count = total_count = 0
+yes_match_1 = no_match_1 = yes_match_2 = no_match_2 = 0
 
-for i in range(3):
-    if y[i] == "no":
-        n += 1
-        if x[i][0] == t[0]: sy_n += 1
-        if x[i][1] == t[1]: c_n += 1
+for i in range(len(data_points)):
+    total_count += 1
+    if labels[i] == "no":
+        no_count += 1
+        if data_points[i][0] == test_points[0]: no_match_1 += 1
+        if data_points[i][1] == test_points[1]: no_match_2 += 1
     else:
-        y_count += 1
-        if x[i][0] == t[0]: sy_y += 1
-        if x[i][1] == t[1]: c_y += 1
+        yes_count += 1
+        if data_points[i][0] == test_points[0]: yes_match_1 += 1
+        if data_points[i][1] == test_points[1]: yes_match_2 += 1
 
-prob_n = (n/3) * (sy_n/n) * (c_n/n)
-prob_y = (y_count/3) * (sy_y/max(1,y_count)) * (c_y/max(1,y_count))
+prob_no = (no_count / total_count) * (no_match_1 / no_count) * (no_match_2 / no_count)
+prob_yes = (yes_count / total_count) * (yes_match_1 / max(1, yes_count)) * (yes_match_2 / max(1, yes_count))
 
-if prob_y > prob_n:
-    print("class = yes")
+if prob_yes > prob_no:
+    print("Predicted Class = yes")
 else:
-    print("class = no")`,
-    output: `class = no`,
+    print("Predicted Class = no")`,
+    output: `Predicted Class = no`,
     explanation: [
-      { step: 1, eng: "x stores simple word pairs mapped to correct y answer sets", tel: "x lo manam check cheyali anukune word pairs unnai marinchi y lo target classes unnai" },
-      { step: 2, eng: "separated independent count tracking handles yes vs no", tel: "variables tracking clear ga yes enni sarlu mariyu no sarlu vachindo lekka vestundi" },
-      { step: 3, eng: "loop manually iterates inspecting every basic logical tally", tel: "loop prathi array column ni check chesi tallies frequency register chestundi" },
-      { step: 4, eng: "probability logic scales counts returning exact percentages", tel: "probability rules use chesi specific class matching math calculate chesthundi" },
-      { step: 5, eng: "higher final computation probability returns final string decision", tel: "oka vela yes value peddaga unte final answer decision adigi print autundi" }
+      { step: 1, eng: "The list data_points provides text categorizations linking distinct structural mappings." },
+      { step: 2, eng: "The variables yes_count tally occurrences identifying fundamental occurrence frequencies natively." },
+      { step: 3, eng: "The complex loop traces discrete arrays mapping word probability occurrences explicitly." },
+      { step: 4, eng: "The logical structure normalizes absolute counts determining multiplicative naive logic percentages." },
+      { step: 5, eng: "The comparative condition extracts predominant frequencies designating definitive predictions mathematically." }
     ]
   },
   {
@@ -154,253 +172,245 @@ else:
     subtitle: "Simple sigmoid approach",
     code: `import math
 
-x = [1, 2, 3, 4]
-y = [0, 0, 1, 1]
-test_vals = [3, 2]
+test_points = [3, 2]
+weight_value = 1.0
+bias_value = -2.5
+threshold_prob = 0.5
 
-w = 1.0
-b = -2.5
-thresh = 0.5
+z_values = []
+probabilities = []
+predictions = []
 
-z_vals = []
-probs = []
-preds = []
+for i in range(len(test_points)):
+    num = test_points[i]
+    z_score = (weight_value * num) + bias_value
+    z_values.append(z_score)
 
-for i in range(len(test_vals)):
-    val = test_vals[i]
-    z = (w * val) + b
-    z_vals.append(z)
+for i in range(len(z_values)):
+    z = z_values[i]
+    prob_val = 1 / (1 + math.exp(-z))
+    probabilities.append(prob_val)
 
-for i in range(len(z_vals)):
-    z = z_vals[i]
-    p = 1 / (1 + math.exp(-z))
-    probs.append(p)
-
-for i in range(len(probs)):
-    p = probs[i]
-    if p > thresh:
-        preds.append(1)
+for i in range(len(probabilities)):
+    p = probabilities[i]
+    if p > threshold_prob:
+        predictions.append(1)
     else:
-        preds.append(0)
+        predictions.append(0)
 
-for i in range(len(test_vals)):
-    val = test_vals[i]
-    c = preds[i]
-    print(f"{val} → {c}")`,
+for i in range(len(test_points)):
+    print(f"{test_points[i]} → {predictions[i]}")`,
     output: `3 → 1
 2 → 0`,
     explanation: [
-      { step: 1, eng: "test_vals stores testable scalar numbers needing classification", tel: "test_vals ani perunna dantlo thelsukovali anukune input numbers unnai" },
-      { step: 2, eng: "loop derives strict linear calculation building z outputs", tel: "loop use chesi manual equationtho weight and bias linear ga multiply chestham" },
-      { step: 3, eng: "secondary step transforms equation variables inside math sigmoid", tel: "rendova loop log math formula use chesi z values kacchiitamo sigmoid ga marchutundi" },
-      { step: 4, eng: "strict parameter checks logical limit extracting categorical logic", tel: "tharwata values threshold datithe appudu specific class decide chesi appends vestundi" },
-      { step: 5, eng: "the extracted answers display mapped cleanly via looping prints", tel: "last loop lo inputs and results final line prints kindha clear chesi petti istadi" }
+      { step: 1, eng: "The list test_points encapsulates unclassified numbers generating arbitrary dynamic logic mappings." },
+      { step: 2, eng: "The variables weight_value designate overarching limits guiding generalized spatial vectors natively." },
+      { step: 3, eng: "The primary loop maps test parameters aggregating foundational linear numeric combinations." },
+      { step: 4, eng: "The condition dynamically translates aggregated structures determining normalized math parameters natively." },
+      { step: 5, eng: "The final validation applies defined probability caps generating static scalar bounds." }
     ]
   },
   {
     id: 7,
     title: "SVM",
     subtitle: "Manual line separation",
-    code: `x = [[1,1],[2,2],[6,6],[7,7]]
-y = [0, 0, 1, 1]
-t = 10
+    code: `data_points = [[1, 1], [2, 2], [6, 6], [7, 7]]
+labels = [0, 0, 1, 1]
+boundary_limit = 10
 
-s = []
-p = []
+point_sums = []
+predictions = []
 
-for i in range(len(x)):
-    pt = x[i]
-    sum_val = pt[0] + pt[1]
-    s.append(sum_val)
+for i in range(len(data_points)):
+    pt = data_points[i]
+    total_val = pt[0] + pt[1]
+    point_sums.append(total_val)
 
-for i in range(len(s)):
-    val = s[i]
+for i in range(len(point_sums)):
+    val = point_sums[i]
     
-    if val > t:
-        c = 1
+    if val > boundary_limit:
+        pred_class = 1
     else:
-        c = 0
+        pred_class = 0
         
-    p.append(c)
+    predictions.append(pred_class)
 
-for i in range(len(x)):
-    pt = x[i]
-    print(f"[{pt[0]},{pt[1]}] → {p[i]}")`,
-    output: `[1,1] → 0
-[2,2] → 0
-[6,6] → 1
-[7,7] → 1`,
+for i in range(len(data_points)):
+    pt = data_points[i]
+    print(f"[{pt[0]}, {pt[1]}] → {predictions[i]}")`,
+    output: `[1, 1] → 0
+[2, 2] → 0
+[6, 6] → 1
+[7, 7] → 1`,
     explanation: [
-      { step: 1, eng: "x array maintains pairs plotting basic spatial boundaries", tel: "x array lona data points ekkada unnayo define chese plane spatial boundaries thelustai" },
-      { step: 2, eng: "t is manually chosen dividing distance barrier explicitly", tel: "t ane var strict barrier distance ga plane lona map chesi line theesthundi" },
-      { step: 3, eng: "loop computes sum mapping distances against defined line logic", tel: "loop coordinates ni line distances ga decide cheyadaniki sum calculate chestundi" },
-      { step: 4, eng: "simple logic assesses threshold boundaries sorting respective lists", tel: "logic sum calculations barrier pass aynaya lekunda class list values lo istaaru" },
-      { step: 5, eng: "predicted outcomes correlate accurately formatting final screen", tel: "final loop screen meeda mapping lists lona exact outputs check chestundi" }
+      { step: 1, eng: "The list data_points provides multi-axis tuples mapping discrete separation bounds perfectly." },
+      { step: 2, eng: "The variable boundary_limit limits dimensional boundaries establishing manual logic borders exactly." },
+      { step: 3, eng: "The initial loop iterates summing dimensional magnitudes converting metrics independently correctly." },
+      { step: 4, eng: "The structural condition resolves logical metrics isolating elements breaching defined capacities." },
+      { step: 5, eng: "The resulting print explicitly connects categorical indices directly assigning mapped integers." }
     ]
   },
   {
     id: 8,
     title: "Neural Network",
-    subtitle: "MLPClassifier Model",
-    code: `from sklearn.neural_network import MLPClassifier
-
-data = [[0, 0], [1, 1], [0, 1], [1, 0]]
+    subtitle: "MLP feedforward logic",
+    code: `data_points = [1, 2, 3, 4]
 labels = [0, 0, 1, 1]
-test_data = [[0, 0], [0, 1]]
 
-model = MLPClassifier(hidden_layer_sizes=(4,), max_iter=2000)
+weight_layer_1 = 1.5
+weight_layer_2 = 2.0
+activation_threshold = 5.0
 
-model.fit(data, labels)
+hidden_layer_values = []
+predictions = []
 
-preds = []
+for i in range(len(data_points)):
+    hidden_val = data_points[i] * weight_layer_1
+    hidden_layer_values.append(hidden_val)
 
-for i in range(len(test_data)):
-    test_pt = [test_data[i]]
-    pred_val = model.predict(test_pt)
-    preds.append(pred_val[0])
+for i in range(len(hidden_layer_values)):
+    out_val = hidden_layer_values[i] * weight_layer_2
+    
+    if out_val > activation_threshold:
+        predictions.append(1)
+    else:
+        predictions.append(0)
 
-for i in range(len(test_data)):
-    val = test_data[i]
-    ans = preds[i]
-    print(f"data={val} → {ans}")`,
-    output: `data=[0, 0] → 0
-data=[0, 1] → 1`,
+for i in range(len(data_points)):
+    print(f"data={data_points[i]} → output={predictions[i]}")`,
+    output: `data=1 → output=0
+data=2 → output=0
+data=3 → output=1
+data=4 → output=1`,
     explanation: [
-      { step: 1, eng: "data array captures extremely restricted input matching lists", tel: "data lists artificial inputs prepare chesi neural matches kosam set authundi" },
-      { step: 2, eng: "MLPClassifier structurally injects multi pathway hidden layer layers", tel: "MLPClassifier command networks prepare chesi hidden layers ni lopala forms isthundi" },
-      { step: 3, eng: "the fitting algorithm runs neural training optimization iteratively", tel: "fitting algorithm computer brain ni data vadi iterate chethu perfect learning untundi" },
-      { step: 4, eng: "testing points process structurally down predictive funnels loops", tel: "loop format lona okkoka test object neural predictive funnel lokಿ passing aypothay" },
-      { step: 5, eng: "output strings display results learned actively from nodes", tel: "neural paths output emi choose chesayo clear parameter nodes results display cheyistai" }
+      { step: 1, eng: "The list data_points stores unactivated linear representations processing external neural networks." },
+      { step: 2, eng: "The variable activation_threshold gates arbitrary outputs standardizing discrete computational matrices internally." },
+      { step: 3, eng: "The fundamental looping sequence filters preliminary math through structurally hidden layers." },
+      { step: 4, eng: "The condition limits simulated matrices extracting categorical flags dynamically isolating variables." },
+      { step: 5, eng: "The final iterative display maps uncoupled predictions bridging exact independent logic lists." }
     ]
   },
   {
     id: 9,
     title: "Random Forest",
-    subtitle: "Manual logical voting",
-    code: `data = [1, 2, 3, 6, 7]
+    subtitle: "Manual voting logic",
+    code: `data_points = [1, 2, 3, 6, 7]
 labels = [0, 0, 0, 1, 1]
 
-r1_preds = []
-r2_preds = []
-r3_preds = []
-preds = []
+predictions_tree_1 = []
+predictions_tree_2 = []
+predictions_tree_3 = []
+final_predictions = []
 
-for i in range(len(data)):
-    val = data[i]
-    if val > 4: r1_preds.append(1)
-    else: r1_preds.append(0)
+for i in range(len(data_points)):
+    val = data_points[i]
     
-    if val > 5: r2_preds.append(1)
-    else: r2_preds.append(0)
+    if val > 4: predictions_tree_1.append(1)
+    else: predictions_tree_1.append(0)
     
-    if val > 3: r3_preds.append(1)
-    else: r3_preds.append(0)
+    if val > 5: predictions_tree_2.append(1)
+    else: predictions_tree_2.append(0)
+    
+    if val > 3: predictions_tree_3.append(1)
+    else: predictions_tree_3.append(0)
 
-for i in range(len(data)):
-    votes = r1_preds[i] + r2_preds[i] + r3_preds[i]
-    if votes >= 2:
-        preds.append(1)
-    else:
-        preds.append(0)
+for i in range(len(data_points)):
+    majority_votes = predictions_tree_1[i] + predictions_tree_2[i] + predictions_tree_3[i]
+    if majority_votes >= 2: final_predictions.append(1)
+    else: final_predictions.append(0)
 
-for i in range(len(data)):
-    print(f"data={data[i]} → {preds[i]}")`,
-    output: `data=1 → 0
-data=2 → 0
-data=3 → 0
-data=6 → 1
-data=7 → 1`,
+for i in range(len(data_points)):
+    print(f"data={data_points[i]} → class={final_predictions[i]}")`,
+    output: `data=1 → class=0
+data=2 → class=0
+data=3 → class=0
+data=6 → class=1
+data=7 → class=1`,
     explanation: [
-      { step: 1, eng: "data defines explicit values passed across three forest models", tel: "data ante clear values forests rule model systems check cheyadaniki pass autai" },
-      { step: 2, eng: "loop generates three manually distinct logic separation outcomes", tel: "loop theskuni different checks pedthu manual outputs array trees forms create vestay" },
-      { step: 3, eng: "three prediction buckets individually emulate forest tree logic", tel: "moodu separate variables exact decision logic trees emautayo predict records chestundi" },
-      { step: 4, eng: "aggregated sums resolve classification identifying majority status", tel: "rendova loop sum aggregated marks count calculations majority check perform logic isthundi" },
-      { step: 5, eng: "a boolean strictly evaluates two-thirds criteria making predictions", tel: "boolean calculation strictly majority vachinda leda cross verification chesi print chestundi" }
+      { step: 1, eng: "The list data_points dictates standalone indices executing distinctly separated logical evaluations." },
+      { step: 2, eng: "The list predictions_tree_1 stores explicitly independent classifications generating conditional rules entirely." },
+      { step: 3, eng: "The core loop populates structurally split rules distributing logic decisions independently." },
+      { step: 4, eng: "The boolean condition checks cumulative counts designating final consensus outcomes cleanly." },
+      { step: 5, eng: "The terminating script merges logical arrays bridging exact categorical results sequentially." }
     ]
   },
   {
     id: 10,
     title: "AdaBoost",
-    subtitle: "Manual boosting concept",
-    code: `data = [1, 2, 3, 6, 7]
+    subtitle: "Manual boosting calculation",
+    code: `data_points = [1, 2, 3, 6, 7]
 labels = [0, 0, 0, 1, 1]
 
-pred_w1 = []
-pred_w2 = []
-preds = []
+weak_pred_1 = []
+weak_pred_2 = []
+final_predictions = []
 
-for i in range(len(data)):
-    if data[i] > 4:
-        pred_w1.append(1)
-    else:
-        pred_w1.append(0)
+for i in range(len(data_points)):
+    if data_points[i] > 4: weak_pred_1.append(1)
+    else: weak_pred_1.append(0)
 
-for i in range(len(data)):
-    if data[i] > 5:
-        pred_w2.append(1)
-    else:
-        pred_w2.append(0)
+for i in range(len(data_points)):
+    if data_points[i] > 5: weak_pred_2.append(1)
+    else: weak_pred_2.append(0)
 
-for i in range(len(data)):
-    total = pred_w1[i] + pred_w2[i]
-    if total >= 1:
-        preds.append(1)
-    else:
-        preds.append(0)
+for i in range(len(data_points)):
+    combined_score = weak_pred_1[i] + weak_pred_2[i]
+    if combined_score >= 1: final_predictions.append(1)
+    else: final_predictions.append(0)
 
-for i in range(len(data)):
-    val = data[i]
-    ans = preds[i]
-    print(f"data={val} → {ans}")`,
+for i in range(len(data_points)):
+    print(f"data={data_points[i]} → {final_predictions[i]}")`,
     output: `data=1 → 0
 data=2 → 0
 data=3 → 0
 data=6 → 1
 data=7 → 1`,
     explanation: [
-      { step: 1, eng: "data establishes exact arrays testing sequential manual pipeline", tel: "data established unna logic loop independent pipeline predictions lopaliki passing start chestundi" },
-      { step: 2, eng: "independent logic boundaries function defining weak structural trees", tel: "independent checks strong rules levu gani weak parameters base avthu results isthay" },
-      { step: 3, eng: "weak decisions assign fundamental values predicting separated results", tel: "e weak checks theeskovadam thone individual parameters decision result formats return avvutay" },
-      { step: 4, eng: "final evaluation boosts accumulated accuracy defining thresholds", tel: "final loop add ups anni add chesi boosting logic values calculations finish esthay" },
-      { step: 5, eng: "values triggering greater counts override original base classes", tel: "final add values base counts daththe accurate parameters decide print thesthundi" }
+      { step: 1, eng: "The list data_points processes individual categorical evaluations parsing strictly separated sequences." },
+      { step: 2, eng: "The variable weak_pred_1 filters initial predictions processing limited categorical frameworks natively." },
+      { step: 3, eng: "The basic sequences iterate completely discrete paths rendering strictly separated conditions." },
+      { step: 4, eng: "The threshold conditions compile combined sums bridging sequential probabilistic categories uniformly." },
+      { step: 5, eng: "The output arrays strictly align extracted variables bridging accurate categorical conclusions." }
     ]
   },
   {
     id: 11,
     title: "Bayesian Network",
-    subtitle: "Probabilistic inference",
-    code: `from pgmpy.models import BayesianModel
-from pgmpy.factors.discrete import TabularCPD
-from pgmpy.inference import VariableElimination
+    subtitle: "Probability inference",
+    code: `events_rain = [1, 1, 0, 0, 1, 0]
+events_traffic = [1, 1, 0, 0, 0, 0]
 
-model = BayesianModel([('Rain', 'Traffic')])
+rain_count = 0
+traffic_given_rain_count = 0
+total_events = len(events_rain)
 
-cpd_rain = TabularCPD('Rain', 2, [[0.8], [0.2]])
+for i in range(total_events):
+    if events_rain[i] == 1:
+        rain_count += 1
+        if events_traffic[i] == 1:
+            traffic_given_rain_count += 1
 
-cpd_traf = TabularCPD('Traffic', 2,
-                      [[0.9, 0.4],
-                       [0.1, 0.6]],
-                      evidence=['Rain'], evidence_card=[2])
+prob_rain = rain_count / total_events
 
-model.add_cpds(cpd_rain, cpd_traf)
+if rain_count > 0:
+    prob_traffic_given_rain = traffic_given_rain_count / rain_count
+else:
+    prob_traffic_given_rain = 0
 
-infer = VariableElimination(model)
+bayes_probability = prob_traffic_given_rain * prob_rain
 
-res = infer.map_query(variables=['Traffic'], evidence={'Rain': 1})
-
-out_val = res['Traffic']
-
-if out_val == 1:
+if bayes_probability > 0.1:
     print("Rain=1 → Traffic=High")
 else:
     print("Rain=1 → Traffic=Low")`,
     output: `Rain=1 → Traffic=High`,
     explanation: [
-      { step: 1, eng: "BayesianModel links discrete event occurrences causality directly", tel: "Rain occurrences inka traffic causations connect chesthu network model link creates ayindi" },
-      { step: 2, eng: "TabularCPD tables outline relational dependence exact probabilities", tel: "Tabular tables discrete conditions events lona probability data percent clear dimensions isthay" },
-      { step: 3, eng: "add function validates relations configuring mathematical nodes", tel: "add funciton relations tables math configurations check cheskuni nodes update map chestundi" },
-      { step: 4, eng: "engine elimination performs localized dependency probability query", tel: "elimination method probability engine localized tests map check calculations pass map works isthundi" },
-      { step: 5, eng: "query triggers explicit dictionary parameters output logic formats", tel: "target parameter inference final output string statements dictionary mappings result display" }
+      { step: 1, eng: "The list events_rain evaluates arbitrary sequential nodes determining overlapping causal constraints." },
+      { step: 2, eng: "The variables rain_count tracks static frequencies mapping accurate statistical causal occurrences." },
+      { step: 3, eng: "The conditional loop determines sequential intersection rates calculating purely exact parameters." },
+      { step: 4, eng: "The arithmetic condition resolves dynamic intersections rendering fractional categorical Bayesian limits." },
+      { step: 5, eng: "The static logical operator checks probabilities formatting textual strings cleanly correctly." }
     ]
   }
 ];

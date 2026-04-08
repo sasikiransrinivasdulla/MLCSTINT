@@ -1,21 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CodeBlock from "./CodeBlock";
+import ExplainModal from "./ExplainModal";
 
 export default function ExperimentModal({ experiment, onClose }) {
-  // ESC to close
+  const [explainData, setExplainData] = useState(null);
+
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        if (explainData) setExplainData(null);
+        else onClose();
+      }
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
+  }, [onClose, explainData]);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div 
         className="modal-content" 
-        onClick={(e) => e.stopPropagation()} // Prevent click-through closing
+        onClick={(e) => e.stopPropagation()} 
       >
         <div className="modal-header">
           <h2>
@@ -42,7 +47,12 @@ export default function ExperimentModal({ experiment, onClose }) {
                 <div className="section-label">
                   <span className="icon">💻</span> Code
                 </div>
-                <CodeBlock code={experiment.code} language="python" experiment={experiment} />
+                <CodeBlock 
+                  code={experiment.code} 
+                  language="python" 
+                  experiment={experiment} 
+                  onExplain={() => setExplainData(experiment.explanation)}
+                />
               </div>
 
               {/* Output Section */}
@@ -55,6 +65,10 @@ export default function ExperimentModal({ experiment, onClose }) {
             </>
           )}
         </div>
+
+        {explainData && (
+          <ExplainModal data={explainData} onClose={() => setExplainData(null)} />
+        )}
       </div>
     </div>
   );

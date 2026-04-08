@@ -19,9 +19,8 @@ const customTheme = {
   },
 };
 
-export default function CodeBlock({ code, language = "python", experiment = null }) {
+export default function CodeBlock({ code, language = "python", experiment = null, onExplain = null }) {
   const [copied, setCopied] = useState(false);
-  const [explainOpen, setExplainOpen] = useState(false);
 
   const handleCopy = async () => {
     try {
@@ -46,12 +45,12 @@ export default function CodeBlock({ code, language = "python", experiment = null
       <div className="code-block-header">
         <span className="code-block-lang">{language}</span>
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          {experiment && experiment.explanation && (
+          {experiment && experiment.explanation && onExplain && (
             <button
               className="explain-toggle-btn"
-              onClick={() => setExplainOpen(!explainOpen)}
+              onClick={onExplain}
             >
-              {explainOpen ? 'Hide Explain' : '💡 Explain'}
+              💡 Explain
             </button>
           )}
           <button
@@ -91,22 +90,6 @@ export default function CodeBlock({ code, language = "python", experiment = null
       >
         {code}
       </SyntaxHighlighter>
-
-      {experiment && experiment.explanation && Array.isArray(experiment.explanation) && (
-        <div className={`explanation-panel ${explainOpen ? 'open' : ''}`}>
-          {experiment.explanation.map((item, idx) => (
-            <div key={idx} className="expl-step">
-              <div className="expl-step-title">Step {item.step}:</div>
-              <div className="expl-row">
-                <strong>ENG:</strong> {item.eng}
-              </div>
-              <div className="expl-row tel-row">
-                <strong>TEL:</strong> <em>"{item.tel}"</em>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

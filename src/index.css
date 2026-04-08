@@ -299,7 +299,7 @@ body {
   white-space: pre-wrap;
 }
 
-/* Explain Button & Panel */
+/* Explain Button */
 .explain-toggle-btn {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -317,49 +317,76 @@ body {
   background: rgba(255, 255, 255, 0.15);
 }
 
-.explanation-panel {
-  background: rgba(255, 255, 255, 0.03);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 0.85rem;
-  line-height: 1.5;
+/* Explain Modal Popup */
+.explain-modal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.2s ease-out;
 }
-.explanation-panel.open {
-  max-height: 800px;
+
+.explain-modal-content {
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7);
+  animation: scaleUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.explain-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.explain-modal-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.explain-modal-body {
+  padding: 24px;
   overflow-y: auto;
-  opacity: 1;
-  padding: 20px;
+  flex: 1;
 }
-.expl-step {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+.expl-modal-step {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
-.expl-step:last-child {
+.expl-modal-step:last-child {
   margin-bottom: 0;
   padding-bottom: 0;
   border-bottom: none;
 }
-.expl-step-title {
-  font-size: 0.8rem;
-  font-weight: 700;
+.expl-modal-step-title {
+  font-size: 0.85rem;
+  font-weight: 800;
   letter-spacing: 0.05em;
-  color: var(--text-primary);
+  color: var(--success);
   margin-bottom: 8px;
   display: block;
 }
-.tel-row {
-  margin-top: 6px; 
-  color: rgba(255, 255, 255, 0.6);
-}
-.expl-row strong {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  margin-right: 8px;
-  letter-spacing: 0.05em;
+.expl-modal-row {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
 }
 
 /* Footer */
