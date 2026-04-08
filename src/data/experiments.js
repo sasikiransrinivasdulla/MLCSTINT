@@ -10,38 +10,35 @@ export const experiments = [
     id: 2,
     title: "Data Preprocessing",
     subtitle: "Imputation & split",
-    code: `data_records = [[1, 10, 0], [2, None, 1], [3, 30, 1], [4, 40, 0]]
+    code: `import pandas as pd
+from sklearn.model_selection import train_test_split
 
-clean_data = []
-feature_sum = 0
-valid_counts = 0
+data_points = pd.DataFrame({
+    "Feature_A": [1, 2, 3, 4, 5],
+    "Feature_B": [10, None, 30, 40, 50],
+    "Labels_C": [0, 1, 1, 0, 1]
+})
 
-for i in range(len(data_records)):
-    row = data_records[i]
-    if row[1] is not None:
-        feature_sum += row[1]
-        valid_counts += 1
+mean_value = data_points["Feature_B"].mean()
+data_points["Feature_B"] = data_points["Feature_B"].fillna(mean_value)
 
-mean_value = feature_sum / valid_counts
+features = data_points[["Feature_A", "Feature_B"]]
+labels = data_points["Labels_C"]
 
-for i in range(len(data_records)):
-    row = data_records[i]
-    if row[1] is None:
-        row[1] = mean_value
-    clean_data.append(row)
+train_features, test_features, train_labels, test_labels = train_test_split(
+    features, labels, test_size=0.2
+)
 
-train_split_count = int(len(clean_data) * 0.5)
-train_set = clean_data[:train_split_count]
-test_set = clean_data[train_split_count:]
-
-print(f"Train size: {len(train_set)}, Test size: {len(test_set)}")`,
-    output: `Train size: 2, Test size: 2`,
+print(f"Training set row count: {len(train_features)}")
+print(f"Testing set row count: {len(test_features)}")`,
+    output: `Training set row count: 4
+Testing set row count: 1`,
     explanation: [
-      { step: 1, eng: "The list data_records stores all tabular structures including missing null columns." },
-      { step: 2, eng: "The variables feature_sum track the base valid row combinations systematically." },
-      { step: 3, eng: "The loop calculates column thresholds verifying strict missing criteria dynamically." },
-      { step: 4, eng: "The secondary block isolates incomplete elements substituting the general mean." },
-      { step: 5, eng: "The final code generates fractional testing and training partition bounds." }
+      { step: 1, eng: "The pandas DataFrame constructs specific columns containing null placeholder gaps deliberately." },
+      { step: 2, eng: "The fillna function resolves null spaces substituting strictly computed static column averages." },
+      { step: 3, eng: "The structures isolate explicit features and designated target labels independently." },
+      { step: 4, eng: "The train_test_split module effectively extracts fractions establishing separate arrays directly." },
+      { step: 5, eng: "The resulting print commands trace structural integer lengths validating slicing executions flawlessly." }
     ]
   },
   {
@@ -254,41 +251,36 @@ for i in range(len(data_points)):
   {
     id: 8,
     title: "Neural Network",
-    subtitle: "MLP feedforward logic",
-    code: `data_points = [1, 2, 3, 4]
+    subtitle: "MLPClassifier Model",
+    code: `from sklearn.neural_network import MLPClassifier
+
+data_points = [[0, 0], [1, 1], [0, 1], [1, 0]]
 labels = [0, 0, 1, 1]
+test_points = [[0, 0], [0, 1]]
 
-weight_layer_1 = 1.5
-weight_layer_2 = 2.0
-activation_threshold = 5.0
+network_model = MLPClassifier(hidden_layer_sizes=(4,), max_iter=2000)
 
-hidden_layer_values = []
+network_model.fit(data_points, labels)
+
 predictions = []
 
-for i in range(len(data_points)):
-    hidden_val = data_points[i] * weight_layer_1
-    hidden_layer_values.append(hidden_val)
+for i in range(len(test_points)):
+    test_pt = [test_points[i]]
+    pred_val = network_model.predict(test_pt)
+    predictions.append(pred_val[0])
 
-for i in range(len(hidden_layer_values)):
-    out_val = hidden_layer_values[i] * weight_layer_2
-    
-    if out_val > activation_threshold:
-        predictions.append(1)
-    else:
-        predictions.append(0)
-
-for i in range(len(data_points)):
-    print(f"data={data_points[i]} → output={predictions[i]}")`,
-    output: `data=1 → output=0
-data=2 → output=0
-data=3 → output=1
-data=4 → output=1`,
+for i in range(len(test_points)):
+    evaluated_val = test_points[i]
+    final_output = predictions[i]
+    print(f"Input={evaluated_val} → Prediction={final_output}")`,
+    output: `Input=[0, 0] → Prediction=0
+Input=[0, 1] → Prediction=1`,
     explanation: [
-      { step: 1, eng: "The list data_points stores unactivated linear representations processing external neural networks." },
-      { step: 2, eng: "The variable activation_threshold gates arbitrary outputs standardizing discrete computational matrices internally." },
-      { step: 3, eng: "The fundamental looping sequence filters preliminary math through structurally hidden layers." },
-      { step: 4, eng: "The condition limits simulated matrices extracting categorical flags dynamically isolating variables." },
-      { step: 5, eng: "The final iterative display maps uncoupled predictions bridging exact independent logic lists." }
+      { step: 1, eng: "The nested arrays declare linear matching metrics feeding neural models systematically." },
+      { step: 2, eng: "The MLPClassifier activates specific hidden layer topologies processing math vectors dynamically." },
+      { step: 3, eng: "The fitting command triggers algorithmic pathways effectively tuning underlying probability matrices." },
+      { step: 4, eng: "The looped prediction pushes independent tuples extracting deterministic structural outputs directly." },
+      { step: 5, eng: "The final outputs render integer probabilities definitively mapping network processing cleanly." }
     ]
   },
   {
@@ -377,40 +369,44 @@ data=7 → 1`,
   {
     id: 11,
     title: "Bayesian Network",
-    subtitle: "Probability inference",
-    code: `events_rain = [1, 1, 0, 0, 1, 0]
-events_traffic = [1, 1, 0, 0, 0, 0]
+    subtitle: "pgmpy Probabilistic inference",
+    code: `from pgmpy.models import BayesianModel
+from pgmpy.factors.discrete import TabularCPD
+from pgmpy.inference import VariableElimination
 
-rain_count = 0
-traffic_given_rain_count = 0
-total_events = len(events_rain)
+bayesian_network = BayesianModel([('Rain', 'Traffic')])
 
-for i in range(total_events):
-    if events_rain[i] == 1:
-        rain_count += 1
-        if events_traffic[i] == 1:
-            traffic_given_rain_count += 1
+probabilities_rain = TabularCPD('Rain', 2, [[0.8], [0.2]])
 
-prob_rain = rain_count / total_events
+probabilities_traffic = TabularCPD(
+    'Traffic', 2,
+    [[0.9, 0.4],
+     [0.1, 0.6]],
+    evidence=['Rain'], evidence_card=[2]
+)
 
-if rain_count > 0:
-    prob_traffic_given_rain = traffic_given_rain_count / rain_count
+bayesian_network.add_cpds(probabilities_rain, probabilities_traffic)
+
+inference_engine = VariableElimination(bayesian_network)
+
+query_result = inference_engine.map_query(
+    variables=['Traffic'], 
+    evidence={'Rain': 1}
+)
+
+predicted_traffic = query_result['Traffic']
+
+if predicted_traffic == 1:
+    print("When Rain=1 → Traffic=High")
 else:
-    prob_traffic_given_rain = 0
-
-bayes_probability = prob_traffic_given_rain * prob_rain
-
-if bayes_probability > 0.1:
-    print("Rain=1 → Traffic=High")
-else:
-    print("Rain=1 → Traffic=Low")`,
-    output: `Rain=1 → Traffic=High`,
+    print("When Rain=1 → Traffic=Low")`,
+    output: `When Rain=1 → Traffic=High`,
     explanation: [
-      { step: 1, eng: "The list events_rain evaluates arbitrary sequential nodes determining overlapping causal constraints." },
-      { step: 2, eng: "The variables rain_count tracks static frequencies mapping accurate statistical causal occurrences." },
-      { step: 3, eng: "The conditional loop determines sequential intersection rates calculating purely exact parameters." },
-      { step: 4, eng: "The arithmetic condition resolves dynamic intersections rendering fractional categorical Bayesian limits." },
-      { step: 5, eng: "The static logical operator checks probabilities formatting textual strings cleanly correctly." }
+      { step: 1, eng: "The BayesianModel initializes arbitrary node linkages extracting explicit mapping relations organically." },
+      { step: 2, eng: "The TabularCPD tables define static discrete event probability fractions mapping connections." },
+      { step: 3, eng: "The add_cpds mapping integrates independent probability bounds evaluating matrix networks systematically." },
+      { step: 4, eng: "The VariableElimination infers dependencies directly resolving explicit fractional bounds natively." },
+      { step: 5, eng: "The dynamic formatting returns specific categorical states directly identifying query results." }
     ]
   }
 ];
