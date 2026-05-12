@@ -42,7 +42,10 @@ body {
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 24px;
+  padding: 24px 16px;
+}
+@media (min-width: 768px) {
+  .dashboard-container { padding: 48px 24px; }
 }
 
 /* Header */
@@ -122,8 +125,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 12px;
   animation: fadeIn 0.15s ease-out;
+}
+@media (min-width: 768px) {
+  .modal-overlay { padding: 24px; }
 }
 
 .modal-content {
@@ -141,12 +147,15 @@ body {
 }
 
 .modal-header {
-  padding: 24px;
+  padding: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+}
+@media (min-width: 768px) {
+  .modal-header { padding: 24px; }
 }
 
 .modal-header h2 {
@@ -156,9 +165,12 @@ body {
 }
 
 .modal-body {
-  padding: 24px;
+  padding: 16px;
   overflow-y: auto;
   flex: 1;
+}
+@media (min-width: 768px) {
+  .modal-body { padding: 24px; }
 }
 
 .close-btn {
@@ -195,8 +207,11 @@ body {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 24px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+@media (min-width: 768px) {
+  .section-card { padding: 20px; margin-bottom: 24px; }
 }
 .section-card:last-child {
   margin-bottom: 0;
@@ -279,11 +294,18 @@ body {
 
 .code-block-wrapper pre {
   margin: 0 !important;
-  padding: 16px !important;
+  padding: 12px !important;
   background: transparent !important;
-  font-size: 0.85rem !important;
-  line-height: 1.7 !important;
+  font-size: 0.75rem !important;
+  line-height: 1.5 !important;
   overflow-x: auto;
+}
+@media (min-width: 768px) {
+  .code-block-wrapper pre {
+    padding: 16px !important;
+    font-size: 0.85rem !important;
+    line-height: 1.7 !important;
+  }
 }
 
 /* Output Block */
@@ -291,12 +313,19 @@ body {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  padding: 16px 20px;
+  padding: 12px 16px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
-  line-height: 1.8;
+  line-height: 1.6;
   white-space: pre-wrap;
+}
+@media (min-width: 768px) {
+  .output-block {
+    padding: 16px 20px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
 }
 
 /* Explain Button */

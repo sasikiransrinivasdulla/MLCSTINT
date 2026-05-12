@@ -19,7 +19,7 @@ const customTheme = {
   },
 };
 
-export default function CodeBlock({ code, language = "python", experiment = null, onExplain = null }) {
+export default function CodeBlock({ code, language = "python" }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -45,14 +45,6 @@ export default function CodeBlock({ code, language = "python", experiment = null
       <div className="code-block-header">
         <span className="code-block-lang">{language}</span>
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          {experiment && experiment.explanation && onExplain && (
-            <button
-              className="explain-toggle-btn"
-              onClick={onExplain}
-            >
-              💡 Explain
-            </button>
-          )}
           <button
             className={`copy-btn ${copied ? "copied" : ""}`}
             onClick={handleCopy}

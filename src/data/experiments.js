@@ -4,42 +4,66 @@ export const experiments = [
     title: "Libraries Intro",
     subtitle: "NumPy, Pandas, Matplotlib",
     isNotesOnly: true,
-    message: "Refer to your lab notes."
+    message: "Refer to your lab notes.",
+    description: `An introduction to essential Python libraries for machine learning.
+NumPy is for matrix math, Pandas for data manipulation, and Matplotlib for plotting.`
   },
   {
     id: 2,
     title: "Data Preprocessing",
     subtitle: "Imputation & split",
-    code: `import pandas as pd
+    code: `from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-data_points = pd.DataFrame({
-    "Feature_A": [1, 2, 3, 4, 5],
-    "Feature_B": [10, None, 30, 40, 50],
-    "Labels_C": [0, 1, 1, 0, 1]
-})
+# Load Dataset
+data = load_iris()
 
-mean_value = data_points["Feature_B"].mean()
-data_points["Feature_B"] = data_points["Feature_B"].fillna(mean_value)
+X = data.data
+y = data.target
 
-features = data_points[["Feature_A", "Feature_B"]]
-labels = data_points["Labels_C"]
+print("Original Data:")
+print(X[:5])
 
-train_features, test_features, train_labels, test_labels = train_test_split(
-    features, labels, test_size=0.2
+# Preprocessing (Scaling)
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+print("\\nPreprocessed Data:")
+print(X[:5])
+
+# Split Dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.3,
+    random_state=1
 )
 
-print(f"Training set row count: {len(train_features)}")
-print(f"Testing set row count: {len(test_features)}")`,
-    output: `Training set row count: 4
-Testing set row count: 1`,
-    explanation: [
-      { step: 1, eng: "The pandas DataFrame constructs specific columns containing null placeholder gaps deliberately." },
-      { step: 2, eng: "The fillna function resolves null spaces substituting strictly computed static column averages." },
-      { step: 3, eng: "The structures isolate explicit features and designated target labels independently." },
-      { step: 4, eng: "The train_test_split module effectively extracts fractions establishing separate arrays directly." },
-      { step: 5, eng: "The resulting print commands trace structural integer lengths validating slicing executions flawlessly." }
-    ]
+print("\\nTraining Data:",
+      len(X_train))
+
+print("Testing Data:",
+      len(X_test))`,
+    output: `Original Data:
+[[5.1 3.5 1.4 0.2]
+ [4.9 3.  1.4 0.2]
+ [4.7 3.2 1.3 0.2]
+ [4.6 3.1 1.5 0.2]
+ [5.  3.6 1.4 0.2]]
+
+Preprocessed Data:
+[[-0.90068117  1.01900435 -1.34022653 -1.3154443 ]
+ [-1.14301691 -0.13197948 -1.34022653 -1.3154443 ]
+ [-1.38535265  0.32841405 -1.39706395 -1.3154443 ]
+ [-1.50652052  0.09821729 -1.2833891  -1.3154443 ]
+ [-1.02184904  1.24920112 -1.34022653 -1.3154443 ]]
+
+Training Data: 105
+Testing Data: 45`,
+    description: `Cleaning and structuring raw data for models. Involves standardizing features and splitting into train/test sets.
+
+Formula (Z-Score Standardization):
+z = (x - μ) / σ`
   },
   {
     id: 3,
@@ -47,121 +71,207 @@ Testing set row count: 1`,
     subtitle: "Manual distance + vote",
     code: `import math
 
-data_points = [[1, 2], [2, 3], [3, 3], [6, 5]]
-labels = [0, 0, 0, 1]
-test_points = [2, 2]
+data = [
+    [1, 2, 0],
+    [2, 3, 0],
+    [3, 2, 0],
+
+    [6, 5, 1],
+    [7, 6, 1],
+    [8, 5, 1],
+
+    [11, 10, 2],
+    [12, 11, 2],
+    [13, 10, 2],
+
+    [7, 5, 1]
+]
+
+test_point = [7, 7]
 
 distance_list = []
 
-for i in range(len(data_points)):
-    point = data_points[i]
-    diff_x = point[0] - test_points[0]
-    diff_y = point[1] - test_points[1]
-    
-    sq_dist = (diff_x * diff_x) + (diff_y * diff_y)
-    dist = math.sqrt(sq_dist)
-    
-    distance_list.append((dist, labels[i]))
+for i in range(len(data)):
+    x = data[i][0]
+    y = data[i][1]
+    label = data[i][2]
+
+    diff_x = x - test_point[0]
+    diff_y = y - test_point[1]
+
+    dist = math.sqrt(diff_x*diff_x + diff_y*diff_y)
+
+    distance_list.append([dist, label])
 
 distance_list.sort()
 
-for k in range(1, 4):
+for k in range(1, 5):
     neighbor_labels = []
-    
+
     for i in range(k):
         neighbor_labels.append(distance_list[i][1])
-        
-    majority_class = max(set(neighbor_labels), key=neighbor_labels.count)
-    print(f"k={k} → class={majority_class}")`,
-    output: `k=1 → class=0
-k=2 → class=0
-k=3 → class=0`,
-    explanation: [
-      { step: 1, eng: "The list data_points stores all numerical coordinates required for measuring boundaries." },
-      { step: 2, eng: "The list labels maps static outcome categories accurately against spatial sets." },
-      { step: 3, eng: "The loop checks distance differentials explicitly processing metric planar roots." },
-      { step: 4, eng: "The nested array sorts measured proximities sorting lowest isolated coordinates." },
-      { step: 5, eng: "The final step defines overarching conditions electing categorical maximum components." }
-    ]
+
+    majority_class = max(set(neighbor_labels),
+                         key=neighbor_labels.count)
+
+    print("k =", k, "→ class =", majority_class)`,
+    output: `k = 1 → class = 1
+k = 2 → class = 1
+k = 3 → class = 1
+k = 4 → class = 1`,
+    description: `A non-parametric algorithm that classifies a point based on the majority class of its 'K' nearest neighbors using a distance metric.
+
+Formula (Euclidean Distance):
+d(p, q) = √[Σ(p_i - q_i)²]`
   },
   {
     id: 4,
     title: "Decision Tree",
     subtitle: "Simple threshold split",
-    code: `data_points = [[2, 1], [3, 2], [10, 8], [12, 10]]
-labels = [0, 0, 1, 1]
-test_points = [[2, 1], [12, 10]]
+    code: `import math
 
-threshold_value = 5
-predictions = []
+data = [
+    ['Sunny', 'Hot', 'High', 'No'],
+    ['Sunny', 'Hot', 'Normal', 'No'],
+    ['Overcast', 'Hot', 'High', 'Yes'],
+    ['Rain', 'Mild', 'High', 'Yes'],
+    ['Rain', 'Cool', 'Normal', 'Yes'],
+    ['Sunny', 'Cool', 'Normal', 'Yes'],
+    ['Overcast', 'Mild', 'High', 'Yes']
+]
 
-for i in range(len(test_points)):
-    test_pt = test_points[i]
-    feature_val = test_pt[0]
-    
-    is_greater = False
-    
-    if feature_val > threshold_value:
-        is_greater = True
-    else:
-        is_greater = False
-        
-    if is_greater == True:
-        predictions.append([test_pt, 1])
-    else:
-        predictions.append([test_pt, 0])
+features = ['Outlook', 'Temperature', 'Humidity']
 
-for mapped_result in predictions:
-    coordinate = mapped_result[0]
-    class_out = mapped_result[1]
-    print(f"{coordinate} → class={class_out}")`,
-    output: `[2, 1] → class=0
-[12, 10] → class=1`,
-    explanation: [
-      { step: 1, eng: "The list test_points inputs dynamic integer thresholds representing independent rules." },
-      { step: 2, eng: "The static threshold_value defines linear logical structures explicitly bounding nodes." },
-      { step: 3, eng: "The initial loop iterates evaluating isolated internal condition branches strictly." },
-      { step: 4, eng: "The condition dictates definitive boolean categories bypassing structural ambiguity elements." },
-      { step: 5, eng: "The final logical array renders predicted node branches matching final coordinates." }
-    ]
+# Entropy
+def entropy(data):
+    yes = no = 0
+
+    for row in data:
+        if row[-1] == 'Yes':
+            yes += 1
+        else:
+            no += 1
+
+    total = yes + no
+    ent = 0
+
+    if yes > 0:
+        p = yes / total
+        ent -= p * math.log2(p)
+
+    if no > 0:
+        p = no / total
+        ent -= p * math.log2(p)
+
+    return ent
+
+# Information Gain
+def info_gain(data, index):
+    total_entropy = entropy(data)
+    values = []
+
+    for row in data:
+        if row[index] not in values:
+            values.append(row[index])
+
+    weighted_entropy = 0
+
+    for v in values:
+        subset = []
+
+        for row in data:
+            if row[index] == v:
+                subset.append(row)
+
+        weight = len(subset) / len(data)
+        weighted_entropy += weight * entropy(subset)
+
+    return total_entropy - weighted_entropy
+
+# Find Best Feature
+best_gain = 0
+best_feature = ""
+
+for i in range(len(features)):
+    gain = info_gain(data, i)
+
+    print(features[i], "Info Gain =", gain)
+
+    if gain > best_gain:
+        best_gain = gain
+        best_feature = features[i]
+
+print("\\nBest Feature =", best_feature)`,
+    output: `Outlook Info Gain = 0.46956521111470695
+Temperature Info Gain = 0.46956521111470695
+Humidity Info Gain = 0.0059777114237739015
+
+Best Feature = Outlook`,
+    description: `A tree-like model that splits data on feature thresholds to maximize information gain.
+
+Formula (Entropy):
+H(S) = - Σ [p_i * log2(p_i)]
+
+Formula (Information Gain):
+IG(S, A) = H(S) - Σ [ (|S_v| / |S|) * H(S_v) ]`
   },
   {
     id: 5,
     title: "Naive Bayes",
     subtitle: "Manual probability freq",
-    code: `data_points = [("sunny", "hot"), ("sunny", "cool"), ("rainy", "cool")]
-labels = ["no", "no", "yes"]
-test_points = ("sunny", "cool")
+    code: `data = [
+    ['Sunny', 'Hot', 'High', 'No'],
+    ['Sunny', 'Hot', 'Normal', 'No'],
+    ['Overcast', 'Hot', 'High', 'Yes'],
+    ['Rain', 'Mild', 'High', 'Yes'],
+    ['Rain', 'Cool', 'Normal', 'Yes'],
+    ['Sunny', 'Cool', 'Normal', 'Yes'],
+    ['Overcast', 'Mild', 'High', 'Yes']
+]
 
-yes_count = no_count = total_count = 0
-yes_match_1 = no_match_1 = yes_match_2 = no_match_2 = 0
+test = ['Sunny', 'Cool', 'Normal']
 
-for i in range(len(data_points)):
-    total_count += 1
-    if labels[i] == "no":
-        no_count += 1
-        if data_points[i][0] == test_points[0]: no_match_1 += 1
-        if data_points[i][1] == test_points[1]: no_match_2 += 1
-    else:
+yes_count = 0
+no_count = 0
+
+for row in data:
+    if row[-1] == 'Yes':
         yes_count += 1
-        if data_points[i][0] == test_points[0]: yes_match_1 += 1
-        if data_points[i][1] == test_points[1]: yes_match_2 += 1
+    else:
+        no_count += 1
 
-prob_no = (no_count / total_count) * (no_match_1 / no_count) * (no_match_2 / no_count)
-prob_yes = (yes_count / total_count) * (yes_match_1 / max(1, yes_count)) * (yes_match_2 / max(1, yes_count))
+p_yes = yes_count / len(data)
+p_no = no_count / len(data)
 
-if prob_yes > prob_no:
-    print("Predicted Class = yes")
+yes_prob = p_yes
+no_prob = p_no
+
+for i in range(len(test)):
+    yes_match = 0
+    no_match = 0
+
+    for row in data:
+        if row[i] == test[i]:
+            if row[-1] == 'Yes':
+                yes_match += 1
+            else:
+                no_match += 1
+
+    yes_prob *= yes_match / yes_count
+    no_prob *= no_match / no_count
+
+if yes_prob > no_prob:
+    print("Class = Yes")
 else:
-    print("Predicted Class = no")`,
-    output: `Predicted Class = no`,
-    explanation: [
-      { step: 1, eng: "The list data_points provides text categorizations linking distinct structural mappings." },
-      { step: 2, eng: "The variables yes_count tally occurrences identifying fundamental occurrence frequencies natively." },
-      { step: 3, eng: "The complex loop traces discrete arrays mapping word probability occurrences explicitly." },
-      { step: 4, eng: "The logical structure normalizes absolute counts determining multiplicative naive logic percentages." },
-      { step: 5, eng: "The comparative condition extracts predominant frequencies designating definitive predictions mathematically." }
-    ]
+    print("Class = No")`,
+    output: `Class = Yes`,
+    description: `A probabilistic classifier calculating the probability of a class given the input features, assuming strict feature independence.
+
+Formula (Bayes' Theorem):
+P(c|x) = [P(x|c) * P(c)] / P(x)
+
+Naive Assumption:
+P(x|c) = Π P(x_i|c)`
   },
   {
     id: 6,
@@ -169,244 +279,487 @@ else:
     subtitle: "Simple sigmoid approach",
     code: `import math
 
-test_points = [3, 2]
-weight_value = 1.0
-bias_value = -2.5
-threshold_prob = 0.5
+data = [
+    [1, 2, 0],
+    [2, 3, 0],
+    [3, 2, 0],
+    [4, 3, 0],
+    [5, 4, 0],
 
-z_values = []
-probabilities = []
-predictions = []
+    [8, 7, 1],
+    [9, 8, 1],
+    [10, 9, 1],
+    [11, 10, 1],
+    [12, 11, 1]
+]
 
-for i in range(len(test_points)):
-    num = test_points[i]
-    z_score = (weight_value * num) + bias_value
-    z_values.append(z_score)
+w1 = 0
+w2 = 0
+b = 0
+lr = 0.01
 
-for i in range(len(z_values)):
-    z = z_values[i]
-    prob_val = 1 / (1 + math.exp(-z))
-    probabilities.append(prob_val)
+# Sigmoid Function
+def sigmoid(z):
+    return 1 / (1 + math.exp(-z))
 
-for i in range(len(probabilities)):
-    p = probabilities[i]
-    if p > threshold_prob:
-        predictions.append(1)
+# Training
+for epoch in range(500):
+
+    for row in data:
+        x1 = row[0]
+        x2 = row[1]
+        y = row[2]
+
+        z = w1*x1 + w2*x2 + b
+        pred = sigmoid(z)
+
+        error = y - pred
+
+        w1 += lr * error * x1
+        w2 += lr * error * x2
+        b += lr * error
+
+# Testing
+test = [[2,3], [9,8], [6,5]]
+
+for t in test:
+    z = w1*t[0] + w2*t[1] + b
+    pred = sigmoid(z)
+
+    if pred >= 0.5:
+        result = 1
     else:
-        predictions.append(0)
+        result = 0
 
-for i in range(len(test_points)):
-    print(f"{test_points[i]} → {predictions[i]}")`,
-    output: `3 → 1
-2 → 0`,
-    explanation: [
-      { step: 1, eng: "The list test_points encapsulates unclassified numbers generating arbitrary dynamic logic mappings." },
-      { step: 2, eng: "The variables weight_value designate overarching limits guiding generalized spatial vectors natively." },
-      { step: 3, eng: "The primary loop maps test parameters aggregating foundational linear numeric combinations." },
-      { step: 4, eng: "The condition dynamically translates aggregated structures determining normalized math parameters natively." },
-      { step: 5, eng: "The final validation applies defined probability caps generating static scalar bounds." }
-    ]
+    print("Data =", t, "Class =", result)`,
+    output: `Data = [2, 3] Class = 0
+Data = [9, 8] Class = 1
+Data = [6, 5] Class = 1`,
+    description: `A linear model used for binary classification. It uses the sigmoid function to map linear inputs to a probability between 0 and 1.
+
+Formula (Sigmoid):
+σ(z) = 1 / (1 + e⁻ᶻ)
+where z = w·x + b`
   },
   {
     id: 7,
     title: "SVM",
     subtitle: "Manual line separation",
-    code: `data_points = [[1, 1], [2, 2], [6, 6], [7, 7]]
-labels = [0, 0, 1, 1]
-boundary_limit = 10
+    code: `data = [
+    [1, 2, -1],
+    [2, 3, -1],
+    [3, 2, -1],
+    [4, 3, -1],
+    [5, 4, -1],
 
-point_sums = []
-predictions = []
+    [8, 7, 1],
+    [9, 8, 1],
+    [10, 9, 1],
+    [11, 10, 1],
+    [12, 11, 1]
+]
 
-for i in range(len(data_points)):
-    pt = data_points[i]
-    total_val = pt[0] + pt[1]
-    point_sums.append(total_val)
+w1 = 0
+w2 = 0
+b = 0
+lr = 0.01
 
-for i in range(len(point_sums)):
-    val = point_sums[i]
-    
-    if val > boundary_limit:
-        pred_class = 1
+# Training
+for epoch in range(500):
+
+    for row in data:
+        x1 = row[0]
+        x2 = row[1]
+        y = row[2]
+
+        value = y * (w1*x1 + w2*x2 + b)
+
+        if value < 1:
+            w1 += lr * y * x1
+            w2 += lr * y * x2
+            b += lr * y
+
+# Testing
+test = [[2,3], [9,8], [6,5]]
+
+for t in test:
+    value = w1*t[0] + w2*t[1] + b
+
+    if value >= 0:
+        result = 1
     else:
-        pred_class = 0
-        
-    predictions.append(pred_class)
+        result = -1
 
-for i in range(len(data_points)):
-    pt = data_points[i]
-    print(f"[{pt[0]}, {pt[1]}] → {predictions[i]}")`,
-    output: `[1, 1] → 0
-[2, 2] → 0
-[6, 6] → 1
-[7, 7] → 1`,
-    explanation: [
-      { step: 1, eng: "The list data_points provides multi-axis tuples mapping discrete separation bounds perfectly." },
-      { step: 2, eng: "The variable boundary_limit limits dimensional boundaries establishing manual logic borders exactly." },
-      { step: 3, eng: "The initial loop iterates summing dimensional magnitudes converting metrics independently correctly." },
-      { step: 4, eng: "The structural condition resolves logical metrics isolating elements breaching defined capacities." },
-      { step: 5, eng: "The resulting print explicitly connects categorical indices directly assigning mapped integers." }
-    ]
+    print("Data =", t, "Class =", result)`,
+    output: `Data = [2, 3] Class = -1
+Data = [9, 8] Class = 1
+Data = [6, 5] Class = -1`,
+    description: `Finds the optimal hyperplane that maximizes the margin between classes using support vectors.
+
+Formula (Hyperplane Margin):
+y_i(w·x_i + b) ≥ 1
+
+Objective: Maximize Margin (2 / ||w||)`
   },
   {
     id: 8,
     title: "Neural Network",
     subtitle: "MLPClassifier Model",
-    code: `from sklearn.neural_network import MLPClassifier
+    code: `import math
 
-data_points = [[0, 0], [1, 1], [0, 1], [1, 0]]
-labels = [0, 0, 1, 1]
-test_points = [[0, 0], [0, 1]]
+data = [
+    [1, 2, 0],
+    [2, 3, 0],
+    [3, 2, 0],
+    [4, 3, 0],
+    [5, 4, 0],
 
-network_model = MLPClassifier(hidden_layer_sizes=(4,), max_iter=2000)
+    [8, 7, 1],
+    [9, 8, 1],
+    [10, 9, 1],
+    [11, 10, 1],
+    [12, 11, 1]
+]
 
-network_model.fit(data_points, labels)
+# Weights
+w1 = 0.5
+w2 = 0.5
+w3 = 0.5
+w4 = 0.5
+b1 = 0.5
+b2 = 0.5
 
-predictions = []
+lr = 0.01
 
-for i in range(len(test_points)):
-    test_pt = [test_points[i]]
-    pred_val = network_model.predict(test_pt)
-    predictions.append(pred_val[0])
+# Sigmoid
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
 
-for i in range(len(test_points)):
-    evaluated_val = test_points[i]
-    final_output = predictions[i]
-    print(f"Input={evaluated_val} → Prediction={final_output}")`,
-    output: `Input=[0, 0] → Prediction=0
-Input=[0, 1] → Prediction=1`,
-    explanation: [
-      { step: 1, eng: "The nested arrays declare linear matching metrics feeding neural models systematically." },
-      { step: 2, eng: "The MLPClassifier activates specific hidden layer topologies processing math vectors dynamically." },
-      { step: 3, eng: "The fitting command triggers algorithmic pathways effectively tuning underlying probability matrices." },
-      { step: 4, eng: "The looped prediction pushes independent tuples extracting deterministic structural outputs directly." },
-      { step: 5, eng: "The final outputs render integer probabilities definitively mapping network processing cleanly." }
-    ]
+# Training
+for epoch in range(500):
+
+    for row in data:
+        x1 = row[0]
+        x2 = row[1]
+        y = row[2]
+
+        # Hidden layer
+        h1 = sigmoid(x1*w1 + x2*w2 + b1)
+
+        # Output layer
+        out = sigmoid(h1*w3 + h1*w4 + b2)
+
+        error = y - out
+
+        # Update weights
+        w1 += lr * error * x1
+        w2 += lr * error * x2
+        w3 += lr * error * h1
+        w4 += lr * error * h1
+
+# Testing
+test = [[2,3], [9,8], [6,5]]
+
+for t in test:
+
+    h1 = sigmoid(t[0]*w1 + t[1]*w2 + b1)
+    out = sigmoid(h1*w3 + h1*w4 + b2)
+
+    if out >= 0.5:
+        result = 1
+    else:
+        result = 0
+
+    print("Data =", t, "Class =", result)`,
+    output: `Data = [2, 3] Class = 1
+Data = [9, 8] Class = 1
+Data = [6, 5] Class = 1`,
+    description: `Interconnected nodes that use activation functions to learn complex, non-linear relationships via backpropagation.
+
+Formula (Hidden Layer Output):
+h = σ(Σ w_i·x_i + b)
+
+Formula (Weight Update Rule):
+w_new = w_old + α * error * x`
   },
   {
     id: 9,
     title: "Random Forest",
     subtitle: "Manual voting logic",
-    code: `data_points = [1, 2, 3, 6, 7]
-labels = [0, 0, 0, 1, 1]
+    code: `data = [
+    [1, 2, 0],
+    [2, 3, 0],
+    [3, 2, 0],
+    [4, 3, 0],
+    [5, 4, 0],
 
-predictions_tree_1 = []
-predictions_tree_2 = []
-predictions_tree_3 = []
-final_predictions = []
+    [8, 7, 1],
+    [9, 8, 1],
+    [10, 9, 1],
+    [11, 10, 1],
+    [12, 11, 1]
+]
 
-for i in range(len(data_points)):
-    val = data_points[i]
-    
-    if val > 4: predictions_tree_1.append(1)
-    else: predictions_tree_1.append(0)
-    
-    if val > 5: predictions_tree_2.append(1)
-    else: predictions_tree_2.append(0)
-    
-    if val > 3: predictions_tree_3.append(1)
-    else: predictions_tree_3.append(0)
+# Simple Trees (Decision Stumps)
+def tree1(x):
+    if x[0] <= 5:
+        return 0
+    return 1
 
-for i in range(len(data_points)):
-    majority_votes = predictions_tree_1[i] + predictions_tree_2[i] + predictions_tree_3[i]
-    if majority_votes >= 2: final_predictions.append(1)
-    else: final_predictions.append(0)
+def tree2(x):
+    if x[1] <= 5:
+        return 0
+    return 1
 
-for i in range(len(data_points)):
-    print(f"data={data_points[i]} → class={final_predictions[i]}")`,
-    output: `data=1 → class=0
-data=2 → class=0
-data=3 → class=0
-data=6 → class=1
-data=7 → class=1`,
-    explanation: [
-      { step: 1, eng: "The list data_points dictates standalone indices executing distinctly separated logical evaluations." },
-      { step: 2, eng: "The list predictions_tree_1 stores explicitly independent classifications generating conditional rules entirely." },
-      { step: 3, eng: "The core loop populates structurally split rules distributing logic decisions independently." },
-      { step: 4, eng: "The boolean condition checks cumulative counts designating final consensus outcomes cleanly." },
-      { step: 5, eng: "The terminating script merges logical arrays bridging exact categorical results sequentially." }
-    ]
+def tree3(x):
+    if x[0] + x[1] <= 10:
+        return 0
+    return 1
+
+trees = [tree1, tree2, tree3]
+
+# Testing
+test = [[2,3], [9,8], [6,5]]
+
+for t in test:
+    votes = []
+
+    for tree in trees:
+        votes.append(tree(t))
+
+    result = max(set(votes), key=votes.count)
+
+    print("Data =", t, "Class =", result)`,
+    output: `Data = [2, 3] Class = 0
+Data = [9, 8] Class = 1
+Data = [6, 5] Class = 1`,
+    description: `An ensemble method combining multiple decision trees (or stumps). Uses majority voting to prevent overfitting.
+
+Formula (Majority Vote):
+Result = Mode(tree_1(x), tree_2(x), ..., tree_n(x))`
   },
   {
     id: 10,
     title: "AdaBoost",
     subtitle: "Manual boosting calculation",
-    code: `data_points = [1, 2, 3, 6, 7]
-labels = [0, 0, 0, 1, 1]
+    code: `import math
 
-weak_pred_1 = []
-weak_pred_2 = []
-final_predictions = []
+data = [
+    [1, 2, -1],
+    [2, 3, -1],
+    [3, 2, -1],
+    [4, 3, -1],
+    [5, 4, -1],
 
-for i in range(len(data_points)):
-    if data_points[i] > 4: weak_pred_1.append(1)
-    else: weak_pred_1.append(0)
+    [8, 7, 1],
+    [9, 8, 1],
+    [10, 9, 1],
+    [11, 10, 1],
+    [12, 11, 1]
+]
 
-for i in range(len(data_points)):
-    if data_points[i] > 5: weak_pred_2.append(1)
-    else: weak_pred_2.append(0)
+# Weak Learners
+def stump1(x):
+    return -1 if x[0] <= 5 else 1
 
-for i in range(len(data_points)):
-    combined_score = weak_pred_1[i] + weak_pred_2[i]
-    if combined_score >= 1: final_predictions.append(1)
-    else: final_predictions.append(0)
+def stump2(x):
+    return -1 if x[1] <= 5 else 1
 
-for i in range(len(data_points)):
-    print(f"data={data_points[i]} → {final_predictions[i]}")`,
-    output: `data=1 → 0
-data=2 → 0
-data=3 → 0
-data=6 → 1
-data=7 → 1`,
-    explanation: [
-      { step: 1, eng: "The list data_points processes individual categorical evaluations parsing strictly separated sequences." },
-      { step: 2, eng: "The variable weak_pred_1 filters initial predictions processing limited categorical frameworks natively." },
-      { step: 3, eng: "The basic sequences iterate completely discrete paths rendering strictly separated conditions." },
-      { step: 4, eng: "The threshold conditions compile combined sums bridging sequential probabilistic categories uniformly." },
-      { step: 5, eng: "The output arrays strictly align extracted variables bridging accurate categorical conclusions." }
-    ]
+def stump3(x):
+    return -1 if x[0] + x[1] <= 10 else 1
+
+learners = [stump1, stump2, stump3]
+alphas = []
+
+# Find Alpha for each learner
+for stump in learners:
+    error = 0
+
+    for row in data:
+        pred = stump(row)
+
+        if pred != row[2]:
+            error += 1
+
+    error = error / len(data)
+
+    if error == 0:
+        alpha = 1
+    else:
+        alpha = 0.5 * math.log((1-error)/error)
+
+    alphas.append(alpha)
+
+# Testing
+test = [[2,3], [9,8], [6,5]]
+
+for t in test:
+    total = 0
+
+    for i in range(len(learners)):
+        total += alphas[i] * learners[i](t)
+
+    if total >= 0:
+        result = 1
+    else:
+        result = -1
+
+    print("Data =", t, "Class =", result)`,
+    output: `Data = [2, 3] Class = -1
+Data = [9, 8] Class = 1
+Data = [6, 5] Class = 1`,
+    description: `An ensemble technique combining sequential weak learners. Each learner focuses heavily on the errors made by previous ones.
+
+Formula (Learner Weight α):
+α = 0.5 * ln((1 - error) / error)
+
+Final Output:
+sign(Σ α_i * learner_i(x))`
   },
   {
     id: 11,
     title: "Bayesian Network",
     subtitle: "pgmpy Probabilistic inference",
-    code: `from pgmpy.models import BayesianModel
+    code: `from pgmpy.models import DiscreteBayesianNetwork
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.inference import VariableElimination
 
-bayesian_network = BayesianModel([('Rain', 'Traffic')])
+# Model Structure
+model = DiscreteBayesianNetwork([
+    ('Rain', 'Traffic'),
+    ('Traffic', 'Late')
+])
 
-probabilities_rain = TabularCPD('Rain', 2, [[0.8], [0.2]])
+# CPDs
+cpd_rain = TabularCPD(
+    'Rain', 2,
+    [[0.7], [0.3]]
+)
 
-probabilities_traffic = TabularCPD(
+cpd_traffic = TabularCPD(
     'Traffic', 2,
-    [[0.9, 0.4],
-     [0.1, 0.6]],
-    evidence=['Rain'], evidence_card=[2]
+    [[0.8, 0.2],
+     [0.2, 0.8]],
+    evidence=['Rain'],
+    evidence_card=[2]
 )
 
-bayesian_network.add_cpds(probabilities_rain, probabilities_traffic)
-
-inference_engine = VariableElimination(bayesian_network)
-
-query_result = inference_engine.map_query(
-    variables=['Traffic'], 
-    evidence={'Rain': 1}
+cpd_late = TabularCPD(
+    'Late', 2,
+    [[0.9, 0.3],
+     [0.1, 0.7]],
+    evidence=['Traffic'],
+    evidence_card=[2]
 )
 
-predicted_traffic = query_result['Traffic']
+# Add CPDs
+model.add_cpds(
+    cpd_rain,
+    cpd_traffic,
+    cpd_late
+)
 
-if predicted_traffic == 1:
-    print("When Rain=1 → Traffic=High")
-else:
-    print("When Rain=1 → Traffic=Low")`,
-    output: `When Rain=1 → Traffic=High`,
-    explanation: [
-      { step: 1, eng: "The BayesianModel initializes arbitrary node linkages extracting explicit mapping relations organically." },
-      { step: 2, eng: "The TabularCPD tables define static discrete event probability fractions mapping connections." },
-      { step: 3, eng: "The add_cpds mapping integrates independent probability bounds evaluating matrix networks systematically." },
-      { step: 4, eng: "The VariableElimination infers dependencies directly resolving explicit fractional bounds natively." },
-      { step: 5, eng: "The dynamic formatting returns specific categorical states directly identifying query results." }
-    ]
+print("Model Valid:",
+      model.check_model())
+
+# Inference
+infer = VariableElimination(model)
+
+print("\\nP(Traffic)")
+print(infer.query(
+    variables=['Traffic']
+))
+
+print("\\nP(Late | Rain=1)")
+print(infer.query(
+    variables=['Late'],
+    evidence={'Rain':1}
+))`,
+    output: `Model Valid: True
+
+P(Traffic)
++------------+----------------+
+| Traffic    |   phi(Traffic) |
++============+================+
+| Traffic(0) |         0.6200 |
++------------+----------------+
+| Traffic(1) |         0.3800 |
++------------+----------------+
+
+P(Late | Rain=1)
++---------+-------------+
+| Late    |   phi(Late) |
++=========+=============+
+| Late(0) |      0.4200 |
++---------+-------------+
+| Late(1) |      0.5800 |
++---------+-------------+`,
+    description: `A graphical model representing probabilistic relationships via a DAG. Uses conditional probability tables for inference.
+
+Formula (Joint Probability Factorization):
+P(X₁, ..., X_n) = Π P(X_i | Parents(X_i))`
+  },
+  {
+    id: 12,
+    title: "HMM",
+    subtitle: "Hidden Markov Model",
+    code: `import numpy as np
+from hmmlearn import hmm
+
+# Data
+d0 = [
+    [[1],[2],[2],[1]],
+    [[2],[1],[2],[2]],
+    [[1],[1],[2],[1]]
+]
+
+d1 = [
+    [[7],[8],[7],[8]],
+    [[8],[7],[8],[7]],
+    [[7],[7],[8],[8]]
+]
+
+# Train HMM
+def train(data):
+    model = hmm.GaussianHMM(
+        n_components=2,
+        n_iter=50
+    )
+
+    X = np.vstack(data)
+    lengths = [len(i) for i in data]
+
+    model.fit(X, lengths)
+    return model
+
+m0 = train(d0)
+m1 = train(d1)
+
+# Testing
+test = [
+    [[2],[1],[2],[1]],
+    [[8],[7],[8],[8]],
+    [[5],[6],[5],[6]]
+]
+
+for t in test:
+
+    s0 = m0.score(t)
+    s1 = m1.score(t)
+
+    if s0 > s1:
+        result = 0
+    else:
+        result = 1
+
+    print("Sequence =", t,
+          "Class =", result)`,
+    output: `Sequence = [[2], [1], [2], [1]] Class = 0
+Sequence = [[8], [7], [8], [8]] Class = 1
+Sequence = [[5], [6], [5], [6]] Class = 1`,
+    description: `Models sequential data transitioning between unobservable hidden states. Each hidden state emits observable outputs.
+
+Formula (Joint Sequence Probability):
+P(X, Z) = P(Z₁) * P(X₁|Z₁) * Π [P(Z_t|Z_{t-1}) * P(X_t|Z_t)]`
   }
 ];

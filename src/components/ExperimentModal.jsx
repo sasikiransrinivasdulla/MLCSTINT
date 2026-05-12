@@ -1,20 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CodeBlock from "./CodeBlock";
-import ExplainModal from "./ExplainModal";
 
 export default function ExperimentModal({ experiment, onClose }) {
-  const [explainData, setExplainData] = useState(null);
 
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
-        if (explainData) setExplainData(null);
-        else onClose();
+        onClose();
       }
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
-  }, [onClose, explainData]);
+  }, [onClose]);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -38,25 +35,33 @@ export default function ExperimentModal({ experiment, onClose }) {
         </div>
 
         <div className="modal-body">
+          {/* Description Section */}
+          <div className="section-card">
+            <div className="section-label">
+              <span className="icon">📄</span> Description
+            </div>
+            <div className="description-block" style={{ whiteSpace: "pre-line", color: "rgba(255, 255, 255, 0.8)", fontSize: "0.9rem", lineHeight: "1.6", padding: "12px", background: "rgba(255, 255, 255, 0.03)", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+              {experiment.description}
+            </div>
+          </div>
+
           {experiment.isNotesOnly ? (
-            <div className="notes-msg">{experiment.message}</div>
+            <div className="notes-msg" style={{ marginTop: "1rem" }}>{experiment.message}</div>
           ) : (
             <>
               {/* Code Section */}
-              <div className="section-card">
+              <div className="section-card" style={{ marginTop: "1.5rem" }}>
                 <div className="section-label">
                   <span className="icon">💻</span> Code
                 </div>
                 <CodeBlock 
                   code={experiment.code} 
                   language="python" 
-                  experiment={experiment} 
-                  onExplain={() => setExplainData(experiment.explanation)}
                 />
               </div>
 
               {/* Output Section */}
-              <div className="section-card">
+              <div className="section-card" style={{ marginTop: "1.5rem" }}>
                 <div className="section-label">
                   <span className="icon">📤</span> Output
                 </div>
@@ -65,10 +70,6 @@ export default function ExperimentModal({ experiment, onClose }) {
             </>
           )}
         </div>
-
-        {explainData && (
-          <ExplainModal data={explainData} onClose={() => setExplainData(null)} />
-        )}
       </div>
     </div>
   );
