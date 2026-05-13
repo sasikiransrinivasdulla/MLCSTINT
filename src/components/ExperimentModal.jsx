@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CodeBlock from "./CodeBlock";
 
 export default function ExperimentModal({ experiment, onClose }) {
+  const [activeTab, setActiveTab] = useState("static");
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -12,6 +13,15 @@ export default function ExperimentModal({ experiment, onClose }) {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
+
+  // Reset tab when experiment changes
+  useEffect(() => {
+    setActiveTab("static");
+  }, [experiment]);
+
+  const hasDynamic = !!experiment.dynamicCode;
+  const currentCode = activeTab === "dynamic" ? experiment.dynamicCode : experiment.code;
+  const currentOutput = activeTab === "dynamic" ? experiment.dynamicOutput : experiment.output;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -51,11 +61,27 @@ export default function ExperimentModal({ experiment, onClose }) {
             <>
               {/* Code Section */}
               <div className="section-card" style={{ marginTop: "1.5rem" }}>
-                <div className="section-label">
-                  <span className="icon">💻</span> Code
+                <div className="section-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span><span className="icon">💻</span> Code</span>
+                  {hasDynamic && (
+                    <div style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '4px', borderRadius: '8px' }}>
+                      <button 
+                        onClick={() => setActiveTab('static')}
+                        style={{ padding: '4px 12px', borderRadius: '6px', fontSize: '0.8rem', background: activeTab === 'static' ? 'rgba(255,255,255,0.1)' : 'transparent', color: activeTab === 'static' ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer', border: 'none', transition: 'all 0.2s' }}
+                      >
+                        Static
+                      </button>
+                      <button 
+                        onClick={() => setActiveTab('dynamic')}
+                        style={{ padding: '4px 12px', borderRadius: '6px', fontSize: '0.8rem', background: activeTab === 'dynamic' ? 'rgba(255,255,255,0.1)' : 'transparent', color: activeTab === 'dynamic' ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer', border: 'none', transition: 'all 0.2s' }}
+                      >
+                        Dynamic
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <CodeBlock 
-                  code={experiment.code} 
+                  code={currentCode} 
                   language="python" 
                 />
               </div>
@@ -65,7 +91,7 @@ export default function ExperimentModal({ experiment, onClose }) {
                 <div className="section-label">
                   <span className="icon">📤</span> Output
                 </div>
-                <div className="output-block">{experiment.output}</div>
+                <div className="output-block">{currentOutput}</div>
               </div>
             </>
           )}
